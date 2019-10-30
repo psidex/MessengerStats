@@ -1,6 +1,12 @@
 
-# Created by https://www.gitignore.io/api/go,jetbrains
-# Edit at https://www.gitignore.io/?templates=go,jetbrains
+# Created by https://www.gitignore.io/api/go,font,jetbrains
+# Edit at https://www.gitignore.io/?templates=go,font,jetbrains
+
+### Font ###
+*.fnt
+*.fon
+*.otf
+*.ttf
 
 ### Go ###
 # Binaries for programs and plugins
@@ -111,4 +117,7 @@ fabric.properties
 .idea/**/markdown-navigator.xml
 .idea/**/markdown-navigator/
 
-# End of https://www.gitignore.io/api/go,jetbrains
+# End of https://www.gitignore.io/api/go,font,jetbrains
+
+# Wordcloud output
+output.png

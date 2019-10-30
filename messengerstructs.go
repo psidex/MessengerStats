@@ -1,59 +1,59 @@
-// ALl of the structs to unmarshal a JSON file of Messenger messages
+// ALl of the structs to unmarshal a JSON file of Messenger messages.
 
 package main
 
-type nameObj struct {
+type NameObj struct {
 	Name string `json:"name"`
 }
 
-type uriObj struct {
+type UriObj struct {
 	Uri string `json:"uri"`
 }
 
-type uriWithTimestampObj struct {
-	uriObj
+type UriWithTimestampObj struct {
+	UriObj
 	CreationTimestamp int64 `json:"creation_timestamp"`
 }
 
-type video struct {
-	uriWithTimestampObj
-	Thumbnail uriObj `json:"thumbnail"`
+type Video struct {
+	UriWithTimestampObj
+	Thumbnail UriObj `json:"thumbnail"`
 }
 
-type share struct {
+type Share struct {
 	Link string `json:"link"`
 }
 
-type reaction struct {
-	Reaction string `json:"reaction"`
+type Reaction struct {
+	Reaction string `json:"Reaction"`
 	Actor    string `json:"actor"`
 }
 
-type plan struct {
+type Plan struct {
 	Title     string `json:"title"`
 	Location  string `json:"location"`
-	Timestamp int64  `json:"int64"`
+	Timestamp int64  `json:"timestamp"`
 }
 
 type Message struct {
-	SenderName  string                `json:"sender_name"`
-	TimestampMs int64                 `json:"timestamp_ms"`
-	Sticker     uriObj                `json:"sticker"`
-	Files       []uriWithTimestampObj `json:"files"`
-	Photos      []uriWithTimestampObj `json:"photos"`
-	Videos      []video               `json:"videos"`
-	AudioFiles  []uriWithTimestampObj `json:"audio_files"`
-	Gifs        []uriObj              `json:"gifs"`
-	Content     string                `json:"content"`
-	Share       share                 `json:"share"`
-	Reactions   []reaction            `json:"reactions"`
-	Plan        plan                  `json:"plan"`
-	Type        string                `json:"type"`
-	Users       []nameObj             `json:"users"`
+	SenderName string                `json:"sender_name"`
+	Timestamp  int64                 `json:"timestamp_ms"`
+	Sticker    UriObj                `json:"sticker"`
+	Files      []UriWithTimestampObj `json:"files"`
+	Photos     []UriWithTimestampObj `json:"photos"`
+	Videos     []Video               `json:"videos"`
+	AudioFiles []UriWithTimestampObj `json:"audio_files"`
+	Gifs       []UriObj              `json:"gifs"`
+	Content    string                `json:"content"`
+	Share      Share                 `json:"Share"`
+	Reactions  []Reaction            `json:"reactions"`
+	Plan       Plan                  `json:"Plan"`
+	Type       string                `json:"type"`
+	Users      []NameObj             `json:"users"`
 }
 
 type Messages struct {
-	Participants       []nameObj `json:"participants"`
+	Participants       []NameObj `json:"participants"`
 	Messages           []Message `json:"messages"`
 	Title              string    `json:"title"`
 	IsStillParticipant bool      `json:"is_still_participant"`
