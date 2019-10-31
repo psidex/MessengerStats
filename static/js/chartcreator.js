@@ -20,7 +20,7 @@ async function createMessagesPerMonthChart(jsonData) {
         }
     }
 
-    const ctx = document.getElementById("messagesPerMonthChart").getContext("2d");
+    const ctx = document.querySelector("#messagesPerMonthChart").getContext("2d");
     new Chart(ctx, {
         type: "line",
         data: data,
@@ -51,7 +51,7 @@ async function createMessagesPerUserChart(jsonData) {
         data.datasets[0].data.push(jsonData.msgsPerUser[user]);
     }
 
-    const ctx = document.getElementById("messagesPerUserChart").getContext("2d");
+    const ctx = document.querySelector("#messagesPerUserChart").getContext("2d");
     new Chart(ctx, {
         type: "bar",
         data: data,
@@ -90,7 +90,7 @@ async function createMessagesPerWeekdayChart(jsonData) {
         data.datasets[0].data.push(jsonData.msgsPerWeekday[weekday]);
     });
 
-    const ctx = document.getElementById("messagesPerWeekdayChart").getContext("2d");
+    const ctx = document.querySelector("#messagesPerWeekdayChart").getContext("2d");
     new Chart(ctx, {
         type: "radar",
         data: data,

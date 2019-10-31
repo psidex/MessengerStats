@@ -50,12 +50,17 @@ func (c *conversationDataHolder) uploadMessengerFileHandler(w http.ResponseWrite
 	// Create new ID and insert into struct lookup map.
 	id := ksuid.New().String()
 
+	// Calculating these before the Lock saves performance
+	msgsPerMonth := messenger.CountMessagesPerMonth(messages)
+	msgsPerUser := messenger.CountMessagesPerUser(messages)
+	msgsPerWeekday := messenger.CountMessagesPerWeekday(messages)
+
 	c.mutex.Lock()
 	c.idLookup[id] = &conversationData{
 		messages.Title,
-		messenger.CountMessagesPerMonth(messages),
-		messenger.CountMessagesPerUser(messages),
-		messenger.CountMessagesPerWeekday(messages),
+		msgsPerMonth,
+		msgsPerUser,
+		msgsPerWeekday,
 	}
 	c.mutex.Unlock()
 
