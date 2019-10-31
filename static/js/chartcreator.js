@@ -1,25 +1,22 @@
 // Note about canvas sizes:
 // https://www.chartjs.org/docs/latest/general/responsive.html#important-note
 
-let rbgColour = "rgb(0,198,255)"
+let rgbColour = "rgb(0,198,255)";
 
-async function CreateMessagesPerMonthChart() {
-    let resp = await fetch("/api/messages/permonth");
-    resp = await resp.json();
-
+async function createMessagesPerMonthChart(jsonData) {
     let data = {
         labels: [],
         datasets: [{
             data: [],
-            borderColor: rbgColour,
+            borderColor: rgbColour,
             lineTension: 0.25
         }]
     };
 
-    for (const year in resp) {
-        for (const month in resp[year]) {
+    for (const year in jsonData.msgsPerMonth) {
+        for (const month in jsonData.msgsPerMonth[year]) {
             data.labels.push(`${year}-${month}`);
-            data.datasets[0].data.push(resp[year][month]);
+            data.datasets[0].data.push(jsonData.msgsPerMonth[year][month]);
         }
     }
 
@@ -40,21 +37,18 @@ async function CreateMessagesPerMonthChart() {
     });
 }
 
-async function CreateMessagesPerUserChart() {
-    let resp = await fetch("/api/messages/peruser");
-    resp = await resp.json();
-
+async function createMessagesPerUserChart(jsonData) {
     let data = {
         labels: [],
         datasets: [{
             data: [],
-            backgroundColor: rbgColour
+            backgroundColor: rgbColour
         }]
     };
 
-    for (const user in resp) {
+    for (const user in jsonData.msgsPerUser) {
         data.labels.push(user);
-        data.datasets[0].data.push(resp[user]);
+        data.datasets[0].data.push(jsonData.msgsPerUser[user]);
     }
 
     const ctx = document.getElementById("messagesPerUserChart").getContext("2d");
@@ -81,22 +75,19 @@ async function CreateMessagesPerUserChart() {
     });
 }
 
-async function CreateMessagesPerWeekdayChart() {
-    let resp = await fetch("/api/messages/perweekday");
-    resp = await resp.json();
-
+async function createMessagesPerWeekdayChart(jsonData) {
     let data = {
         labels: [],
         datasets: [{
             data: [],
-            borderColor: rbgColour
+            borderColor: rgbColour
         }]
     };
 
     let weekdays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
     weekdays.forEach((weekday) => {
         data.labels.push(weekday);
-        data.datasets[0].data.push(resp[weekday]);
+        data.datasets[0].data.push(jsonData.msgsPerWeekday[weekday]);
     });
 
     const ctx = document.getElementById("messagesPerWeekdayChart").getContext("2d");
@@ -121,15 +112,24 @@ async function CreateMessagesPerWeekdayChart() {
     });
 }
 
-async function SetTitle() {
-    let resp = await fetch("/api/messages/title");
+async function setTitle(jsonData) {
     let title = document.querySelector("#title");
-    title.textContent = `Messenger Stats for conversation: ${await resp.json()}`
+    title.textContent = `Messenger Stats for conversation: ${jsonData.title}`
 }
 
-window.addEventListener("load", () => {
-    SetTitle();
-    CreateMessagesPerMonthChart();
-    CreateMessagesPerUserChart();
-    CreateMessagesPerWeekdayChart();
+window.addEventListener("load", async () => {
+
+    let currentUrl = new URL(window.location.href);
+    let id = currentUrl.searchParams.get("id");
+
+    if (id !== null) {
+        let rawData = await fetch(`/api/data?id=${id}`);
+        let data = await rawData.json();
+
+        setTitle(data);
+        createMessagesPerMonthChart(data);
+        createMessagesPerUserChart(data);
+        createMessagesPerWeekdayChart(data);
+    }
+
 });
