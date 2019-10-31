@@ -2,17 +2,19 @@ package main
 
 import (
 	"encoding/json"
-	"github.com/psykhi/wordclouds"
-	"image/color"
-	"image/png"
+	"github.com/psidex/MessengerStats/messenger"
 	"io/ioutil"
 	"log"
+	"net/http"
 	"os"
 	"path"
 )
 
-// loadJson takes a path to a json file and a struct, and unmarshals the data from the file into the struct.
-func loadJson(pathToFile string, messages *Messages) {
+// loadJson takes a path to a json file and a Messages struct, and unmarshals the data from the file into the struct.
+// Example:
+//  messages := &messenger.Messages{}
+//  loadJson(messagesJsonFile, messages)
+func loadJson(pathToFile string, messages *messenger.Messages) {
 	jsonFile, err := os.Open(pathToFile)
 	if err != nil {
 		log.Fatal("Couldn't open messages file: ", err)
@@ -36,53 +38,28 @@ func main() {
 	messagesJsonFile := path.Join(messagesDir, "message_1.json")
 	log.Println("Opening", messagesJsonFile)
 
-	messages := &Messages{}
+	messages := &messenger.Messages{}
 	loadJson(messagesJsonFile, messages)
 
-	//messagesPerDate := CountMessagesPerDate(messages)
-	//for d, messageCount := range messagesPerDate {
-	//	log.Println("Date:", d, "Message count:", messageCount)
-	//}
-	//
-	//messagesPerUser := CountMessagesPerUser(messages)
-	//for user, messageCount := range messagesPerUser {
-	//	log.Println("User:", user, "Message count:", messageCount)
-	//}
+	http.HandleFunc("/api/messages/permonth", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		messagesPerMonth := messenger.CountMessagesPerMonth(messages)
+		_ = json.NewEncoder(w).Encode(messagesPerMonth)
+	})
 
-	wordCount := CountWords(messages)
-	newWordCount := make(map[string]int)
-	for word, wordCount := range wordCount {
-		if wordCount > 100 && len(word) > 1 {
-			newWordCount[word] = wordCount
-		}
-	}
+	http.HandleFunc("/api/messages/peruser", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		messagesPerMonth := messenger.CountMessagesPerUser(messages)
+		_ = json.NewEncoder(w).Encode(messagesPerMonth)
+	})
 
-	colors := []color.Color{
-		color.RGBA{0x1b, 0x1b, 0x1b, 0xff},
-		color.RGBA{0x48, 0x48, 0x4B, 0xff},
-		color.RGBA{0x59, 0x3a, 0xee, 0xff},
-		color.RGBA{0x65, 0xCD, 0xFA, 0xff},
-		color.RGBA{0x70, 0xD6, 0xBF, 0xff},
-	}
+	http.HandleFunc("/api/messages/perweekday", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		messagesPerWeekday := messenger.CountMessagesPerWeekday(messages)
+		_ = json.NewEncoder(w).Encode(messagesPerWeekday)
+	})
 
-	w := wordclouds.NewWordcloud(
-		newWordCount,
-		wordclouds.FontFile("Roboto-Regular.ttf"),
-		wordclouds.FontMaxSize(700),
-		wordclouds.FontMinSize(10),
-		wordclouds.Colors(colors),
-		wordclouds.Height(4096),
-		wordclouds.Width(4096),
-	)
+	http.Handle("/", http.FileServer(http.Dir("static")))
 
-	img := w.Draw()
-
-	outputFile, err := os.Create("output.png")
-	if err != nil {
-		log.Fatal("Failed to open output.png:", err)
-	}
-	_ = png.Encode(outputFile, img)
-	_ = outputFile.Close()
-
-	log.Println("Done. Messages processed:", len(messages.Messages))
+	_ = http.ListenAndServe("127.0.0.1:8080", nil)
 }

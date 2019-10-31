@@ -1,6 +1,6 @@
 // ALl of the structs to unmarshal a JSON file of Messenger messages.
 
-package main
+package messenger
 
 type NameObj struct {
 	Name string `json:"name"`
@@ -25,7 +25,7 @@ type Share struct {
 }
 
 type Reaction struct {
-	Reaction string `json:"Reaction"`
+	Reaction string `json:"reaction"`
 	Actor    string `json:"actor"`
 }
 

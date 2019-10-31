@@ -1,0 +1,13 @@
+body {
+    margin: 0;
+    text-align: center;
+    font-family: 'Fira Sans', sans-serif;
+}
+
+.chart-container {
+    position: relative;
+    display:inline-block;
+    width: 50vw;
+    height: 26vh;
+    padding-bottom: 1em;
+}

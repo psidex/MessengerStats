@@ -1,6 +1,6 @@
 // For dealing with gathering statistics from a Message struct.
 
-package main
+package messenger
 
 import (
 	"github.com/bbalet/stopwords"
@@ -9,32 +9,56 @@ import (
 	"unicode"
 )
 
-type date struct {
-	Year  int
-	Month time.Month
-}
-
-// getSentDate takes a Message struct and returns a date struct of the date that it was sent.
-func getSentDate(message Message) date {
+// getYearMonth returns the year and month the message was sent as integers (e.g. 2000, 12 for Dec 2000).
+func getYearMonth(message Message) (int, int) {
 	// FB uses ms instead of s
 	ts := message.Timestamp / 1000
 	y, m, _ := time.Unix(ts, 0).Date()
-	return date{y, m}
+	return y, int(m)
 }
 
-// CountMessagesPerDate takes a Messages struct and counts how many messages were sent on each date.
-// The date is represented as a Year + Month, not including the day.
-func CountMessagesPerDate(messages *Messages) map[date]int {
-	messagesPerDate := make(map[date]int)
+// CountMessagesPerMonth takes a Messages struct and counts how many messages were sent on each month, categorized by year.
+// Example map using data from Nov and Dec in 2017: {2017: {11: 69, 12: 420}}
+func CountMessagesPerMonth(messages *Messages) map[int]map[int]int {
+	messagesPerDate := make(map[int]map[int]int)
 
 	for _, message := range messages.Messages {
 
-		currentDate := getSentDate(message)
+		year, month := getYearMonth(message)
+
 		// https://stackoverflow.com/a/2050629/6396652
-		if _, ok := messagesPerDate[currentDate]; ok {
-			messagesPerDate[currentDate]++
+		if _, ok := messagesPerDate[year]; ok {
+			if _, ok := messagesPerDate[year][month]; ok {
+				messagesPerDate[year][month]++
+			} else {
+				messagesPerDate[year][month] = 1
+			}
 		} else {
-			messagesPerDate[currentDate] = 1
+			messagesPerDate[year] = map[int]int{month: 1}
+		}
+
+	}
+
+	return messagesPerDate
+}
+
+// getSentDay returns the weekday that the message was sent on.
+func getSentDay(message Message) string {
+	ts := message.Timestamp / 1000
+	return time.Unix(ts, 0).Weekday().String()
+}
+
+// CountMessagesPerWeekday takes a Messages struct and counts how many messages were sent on each day.
+func CountMessagesPerWeekday(messages *Messages) map[string]int {
+	messagesPerDate := make(map[string]int)
+
+	for _, message := range messages.Messages {
+
+		currentDay := getSentDay(message)
+		if _, ok := messagesPerDate[currentDay]; ok {
+			messagesPerDate[currentDay]++
+		} else {
+			messagesPerDate[currentDay] = 1
 		}
 
 	}
