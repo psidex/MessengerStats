@@ -1,6 +1,8 @@
 // Note about canvas sizes:
 // https://www.chartjs.org/docs/latest/general/responsive.html#important-note
 
+let rbgColour = "rgb(0,198,255)"
+
 async function CreateMessagesPerMonthChart() {
     let resp = await fetch("/api/messages/permonth");
     resp = await resp.json();
@@ -9,7 +11,7 @@ async function CreateMessagesPerMonthChart() {
         labels: [],
         datasets: [{
             data: [],
-            borderColor: "rgb(75, 192, 192)",
+            borderColor: rbgColour,
             lineTension: 0.25
         }]
     };
@@ -46,7 +48,7 @@ async function CreateMessagesPerUserChart() {
         labels: [],
         datasets: [{
             data: [],
-            backgroundColor: "rgb(75, 192, 192)"
+            backgroundColor: rbgColour
         }]
     };
 
@@ -87,14 +89,15 @@ async function CreateMessagesPerWeekdayChart() {
         labels: [],
         datasets: [{
             data: [],
-            borderColor: "rgb(75, 192, 192)"
+            borderColor: rbgColour
         }]
     };
 
-    for (const weekday in resp) {
+    let weekdays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+    weekdays.forEach((weekday) => {
         data.labels.push(weekday);
         data.datasets[0].data.push(resp[weekday]);
-    }
+    });
 
     const ctx = document.getElementById("messagesPerWeekdayChart").getContext("2d");
     new Chart(ctx, {
@@ -103,7 +106,7 @@ async function CreateMessagesPerWeekdayChart() {
         options: {
             title: {
                 display: true,
-                text: "Messages Sent Per Weekday"
+                text: "Total Messages Sent Per Weekday"
             },
             legend: {
                 display: false
@@ -118,6 +121,15 @@ async function CreateMessagesPerWeekdayChart() {
     });
 }
 
-CreateMessagesPerMonthChart();
-CreateMessagesPerUserChart();
-CreateMessagesPerWeekdayChart();
+async function SetTitle() {
+    let resp = await fetch("/api/messages/title");
+    let title = document.querySelector("#title");
+    title.textContent = `Messenger Stats for conversation: ${await resp.json()}`
+}
+
+window.addEventListener("load", () => {
+    SetTitle();
+    CreateMessagesPerMonthChart();
+    CreateMessagesPerUserChart();
+    CreateMessagesPerWeekdayChart();
+});

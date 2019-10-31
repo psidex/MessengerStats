@@ -3,43 +3,43 @@ package main
 import (
 	"encoding/json"
 	"github.com/psidex/MessengerStats/messenger"
-	"io/ioutil"
 	"log"
 	"net/http"
-	"os"
-	"path"
 )
 
-// loadJson takes a path to a json file and a Messages struct, and unmarshals the data from the file into the struct.
-// Example:
-//  messages := &messenger.Messages{}
-//  loadJson(messagesJsonFile, messages)
-func loadJson(pathToFile string, messages *messenger.Messages) {
-	jsonFile, err := os.Open(pathToFile)
-	if err != nil {
-		log.Fatal("Couldn't open messages file: ", err)
-	}
-	defer jsonFile.Close()
+var messages *messenger.Messages
 
-	byteValue, _ := ioutil.ReadAll(jsonFile)
-
-	err = json.Unmarshal(byteValue, messages)
+// uploadMessengerFile is a HTTP endpoint that takes a JSON file and parses it into the global messages variable
+func uploadMessengerFile(w http.ResponseWriter, r *http.Request) {
+	// https://tutorialedge.net/golang/go-file-upload-tutorial/
+	// FormFile returns the first file for the given key `myFile`
+	// it also returns the FileHeader so we can get the Filename,
+	// the Header and the size of the file.
+	file, handler, err := r.FormFile("messengerFile")
 	if err != nil {
-		log.Fatal("Failed to unmarshal JSON data: ", err)
+		log.Println("Error Retrieving the File:", err)
+		return
 	}
+	defer file.Close()
+
+	log.Printf("Uploaded File: %+v\n", handler.Filename)
+	log.Printf("File Size: %+v\n", handler.Size)
+	log.Printf("MIME Header: %+v\n", handler.Header)
+
+	messages = &messenger.Messages{}
+	err = messenger.LoadMessengerJson(file, messages)
+	if err != nil {
+		// TODO: Let user know file is invalid
+		log.Fatal("loadMessengerJson error:", err)
+	}
+
+	// Only redirects after data loaded into messages struct
+	http.Redirect(w, r, r.Header.Get("Referer"), 302)
 }
 
 func main() {
-	if len(os.Args) < 2 {
-		log.Fatal("No messenger directory specified")
-	}
-
-	messagesDir := os.Args[1]
-	messagesJsonFile := path.Join(messagesDir, "message_1.json")
-	log.Println("Opening", messagesJsonFile)
-
-	messages := &messenger.Messages{}
-	loadJson(messagesJsonFile, messages)
+	// Default to empty
+	messages = &messenger.Messages{}
 
 	http.HandleFunc("/api/messages/permonth", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
@@ -59,7 +59,12 @@ func main() {
 		_ = json.NewEncoder(w).Encode(messagesPerWeekday)
 	})
 
-	http.Handle("/", http.FileServer(http.Dir("static")))
+	http.HandleFunc("/api/messages/title", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		_ = json.NewEncoder(w).Encode(messages.Title)
+	})
 
+	http.HandleFunc("/upload", uploadMessengerFile)
+	http.Handle("/", http.FileServer(http.Dir("static")))
 	_ = http.ListenAndServe("127.0.0.1:8080", nil)
 }

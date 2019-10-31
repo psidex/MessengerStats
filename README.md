@@ -1,2 +1,9 @@
 # MessengerStats
-View statsistcs about your Meseenger conversations
+
+View statistics about your Messenger conversations
+
+## Example
+
+(Names censored)
+
+![example](example.png)

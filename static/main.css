@@ -6,8 +6,12 @@ body {
 
 .chart-container {
     position: relative;
-    display:inline-block;
+    display: inline-block;
     width: 50vw;
-    height: 26vh;
+    height: 25vh;
+    padding-bottom: 1em;
+}
+
+form {
     padding-bottom: 1em;
 }
