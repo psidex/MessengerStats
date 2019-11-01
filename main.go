@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/psidex/MessengerStats/messenger"
 	"github.com/segmentio/ksuid"
 	"log"
@@ -11,6 +12,7 @@ import (
 )
 
 // A struct to hold all stats from an individual Messenger conversation.
+// TODO: Title can potentially have non-ASCII chars in it, how to deal with that?
 type conversationData struct {
 	Title          string              `json:"title"`
 	MsgsPerMonth   map[int]map[int]int `json:"msgsPerMonth"`
@@ -94,14 +96,18 @@ func (c *conversationDataHolder) getConversationDataApiHandler(w http.ResponseWr
 			if err != nil {
 				log.Println("JSON Encode error:", err)
 			}
+			return
 
 		} else {
-			// TODO: Respond "ID not found"
+			// TODO: More consistent error reporting than just a string description?
+			_, _ = fmt.Fprintf(w, "{\"error\": \"ID not found\"}")
+			return
 		}
 	} else {
-		// TODO: Respond "no ID in URL"
+		// 404 since no ID was in the URL
+		http.NotFound(w, r)
+		return
 	}
-
 }
 
 func main() {

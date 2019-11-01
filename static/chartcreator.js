@@ -118,18 +118,20 @@ async function setTitle(jsonData) {
 }
 
 window.addEventListener("load", async () => {
-
     let currentUrl = new URL(window.location.href);
     let id = currentUrl.searchParams.get("id");
 
-    if (id !== null) {
-        let rawData = await fetch(`/api/data?id=${id}`);
-        let data = await rawData.json();
+    if (id === null)
+        return;
 
-        setTitle(data);
-        createMessagesPerMonthChart(data);
-        createMessagesPerUserChart(data);
-        createMessagesPerWeekdayChart(data);
-    }
+    let rawData = await fetch(`/api/data?id=${id}`);
+    let data = await rawData.json();
 
+    if (data.error === "ID not found")
+        return alert("ID not found");
+
+    setTitle(data);
+    createMessagesPerMonthChart(data);
+    createMessagesPerUserChart(data);
+    createMessagesPerWeekdayChart(data);
 });
