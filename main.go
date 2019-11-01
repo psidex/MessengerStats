@@ -52,7 +52,7 @@ func (c *conversationDataHolder) uploadMessengerFileHandler(w http.ResponseWrite
 	// Create new ID and insert into struct lookup map.
 	id := ksuid.New().String()
 
-	// Calculating these before the Lock saves performance
+	// Calculating these before the Lock saves performance.
 	msgsPerMonth := messenger.CountMessagesPerMonth(messages)
 	msgsPerUser := messenger.CountMessagesPerUser(messages)
 	msgsPerWeekday := messenger.CountMessagesPerWeekday(messages)
@@ -96,7 +96,6 @@ func (c *conversationDataHolder) getConversationDataApiHandler(w http.ResponseWr
 			if err != nil {
 				log.Println("JSON Encode error:", err)
 			}
-			return
 
 		} else {
 			// TODO: More consistent error reporting than just a string description?
@@ -104,7 +103,7 @@ func (c *conversationDataHolder) getConversationDataApiHandler(w http.ResponseWr
 			return
 		}
 	} else {
-		// 404 since no ID was in the URL
+		// 404 since no ID was in the URL.
 		http.NotFound(w, r)
 		return
 	}
