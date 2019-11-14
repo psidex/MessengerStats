@@ -83,29 +83,28 @@ func (c *conversationDataHolder) getConversationDataApiHandler(w http.ResponseWr
 
 	idQuery, ok := r.URL.Query()["id"]
 
-	if ok {
-		id := idQuery[0]
-		log.Println("Stats for ID requested:", id)
-
-		c.mutex.Lock()
-		stats, ok := c.idLookup[id]
-		c.mutex.Unlock()
-
-		if ok {
-			err := json.NewEncoder(w).Encode(stats)
-			if err != nil {
-				log.Println("JSON Encode error:", err)
-			}
-
-		} else {
-			// TODO: More consistent error reporting than just a string description?
-			_, _ = fmt.Fprintf(w, "{\"error\": \"ID not found\"}")
-			return
-		}
-	} else {
+	if !ok {
 		// 404 since no ID was in the URL.
 		http.NotFound(w, r)
 		return
+	}
+
+	id := idQuery[0]
+	log.Println("Stats for ID requested:", id)
+
+	c.mutex.Lock()
+	stats, ok := c.idLookup[id]
+	c.mutex.Unlock()
+
+	if !ok {
+		// TODO: More consistent error reporting than just a string description?
+		_, _ = fmt.Fprintf(w, "{\"error\": \"ID not found\"}")
+		return
+	}
+
+	err := json.NewEncoder(w).Encode(stats)
+	if err != nil {
+		log.Println("JSON Encode error:", err)
 	}
 }
 
