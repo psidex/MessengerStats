@@ -13,10 +13,10 @@ async function createMessagesPerMonthChart(jsonData) {
         }]
     };
 
-    for (const year in jsonData.msgsPerMonth) {
-        for (const month in jsonData.msgsPerMonth[year]) {
+    for (const year in jsonData.messages_per_month) {
+        for (const month in jsonData.messages_per_month[year]) {
             data.labels.push(`${year}-${month}`);
-            data.datasets[0].data.push(jsonData.msgsPerMonth[year][month]);
+            data.datasets[0].data.push(jsonData.messages_per_month[year][month]);
         }
     }
 
@@ -46,9 +46,9 @@ async function createMessagesPerUserChart(jsonData) {
         }]
     };
 
-    for (const user in jsonData.msgsPerUser) {
+    for (const user in jsonData.messages_per_user) {
         data.labels.push(user);
-        data.datasets[0].data.push(jsonData.msgsPerUser[user]);
+        data.datasets[0].data.push(jsonData.messages_per_user[user]);
     }
 
     const ctx = document.querySelector("#messagesPerUserChart").getContext("2d");
@@ -87,7 +87,7 @@ async function createMessagesPerWeekdayChart(jsonData) {
     let weekdays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
     weekdays.forEach((weekday) => {
         data.labels.push(weekday);
-        data.datasets[0].data.push(jsonData.msgsPerWeekday[weekday]);
+        data.datasets[0].data.push(jsonData.messages_per_weekday[weekday]);
     });
 
     const ctx = document.querySelector("#messagesPerWeekdayChart").getContext("2d");
@@ -114,7 +114,7 @@ async function createMessagesPerWeekdayChart(jsonData) {
 
 async function setTitle(jsonData) {
     let title = document.querySelector("#title");
-    title.textContent = `Messenger Stats for conversation: ${jsonData.title}`
+    title.textContent = `Messenger Stats for conversation: ${jsonData.conversation_title}`
 }
 
 window.addEventListener("load", async () => {
@@ -124,7 +124,7 @@ window.addEventListener("load", async () => {
     if (id === null)
         return;
 
-    let rawData = await fetch(`/api/data?id=${id}`);
+    let rawData = await fetch(`/api/stats?id=${id}`);
     let data = await rawData.json();
 
     if (data.error === "ID not found")
