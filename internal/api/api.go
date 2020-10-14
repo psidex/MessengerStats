@@ -42,7 +42,7 @@ func (c *ConversationStatsApi) FileUploadHandler(w http.ResponseWriter, r *http.
 	file, fileHeader, err := r.FormFile("messengerFile")
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		_, _ = fmt.Fprintf(w, "error: %s}", err)
+		_, _ = fmt.Fprintf(w, "<h1>400 Bad Request</h1>\n%s", err)
 		return
 	}
 	defer file.Close()
@@ -53,7 +53,7 @@ func (c *ConversationStatsApi) FileUploadHandler(w http.ResponseWriter, r *http.
 	conversation, err := messenger.NewConversation(file)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		_, _ = fmt.Fprintf(w, "error: %s}", err)
+		_, _ = fmt.Fprintf(w, "<h1>400 Bad Request</h1>\n%s", err)
 		return
 	}
 
@@ -117,6 +117,6 @@ func (c *ConversationStatsApi) ConversationStatsHandler(w http.ResponseWriter, r
 	w.WriteHeader(http.StatusOK)
 	err := json.NewEncoder(w).Encode(savedStats)
 	if err != nil {
-		log.Println("JSON Encode error:", err)
+		log.Println("ConversationStatsHandler JSON Encode error:", err)
 	}
 }
