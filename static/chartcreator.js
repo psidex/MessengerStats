@@ -3,7 +3,7 @@
 
 let rgbColour = "rgb(0,198,255)";
 
-async function createMessagesPerMonthChart(jsonData) {
+function createMessagesPerMonthChart(jsonData) {
     let data = {
         labels: [],
         datasets: [{
@@ -37,7 +37,7 @@ async function createMessagesPerMonthChart(jsonData) {
     });
 }
 
-async function createMessagesPerUserChart(jsonData) {
+function createMessagesPerUserChart(jsonData) {
     let data = {
         labels: [],
         datasets: [{
@@ -75,7 +75,7 @@ async function createMessagesPerUserChart(jsonData) {
     });
 }
 
-async function createMessagesPerWeekdayChart(jsonData) {
+function createMessagesPerWeekdayChart(jsonData) {
     let data = {
         labels: [],
         datasets: [{
@@ -112,9 +112,8 @@ async function createMessagesPerWeekdayChart(jsonData) {
     });
 }
 
-async function setTitle(jsonData) {
-    let title = document.querySelector("#title");
-    title.textContent = `Messenger Stats for conversation: ${jsonData.conversation_title}`
+function setTitle(titleText) {
+    document.getElementById("title").textContent = `Messenger Stats for conversation: ${titleText}`
 }
 
 window.addEventListener("load", async () => {
@@ -130,7 +129,7 @@ window.addEventListener("load", async () => {
     if (data.error === "ID not found")
         return alert("ID not found");
 
-    setTitle(data);
+    setTitle(data["conversation_title"]);
     createMessagesPerMonthChart(data);
     createMessagesPerUserChart(data);
     createMessagesPerWeekdayChart(data);

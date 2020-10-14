@@ -36,13 +36,17 @@ func NewConversationStatsApi() *ConversationStatsApi {
 
 // FileUploadHandler is a HTTP handler that takes a Messenger JSON file, parses it, and saves the stats in memory.
 // Expects a POST request.
+// TODO: Allow uploading multiple files from a single conversation at the same time.
 func (c *ConversationStatsApi) FileUploadHandler(w http.ResponseWriter, r *http.Request) {
-
-	// https://tutorialedge.net/golang/go-file-upload-tutorial/
-	file, fileHeader, err := r.FormFile("messengerFile")
-	if err != nil {
+	if r.Method != "POST" {
 		w.WriteHeader(http.StatusBadRequest)
-		_, _ = fmt.Fprintf(w, "<h1>400 Bad Request</h1>\n%s", err)
+		_, _ = fmt.Fprint(w, "<h1>400 Bad Request</h1>\nMust send a POST request")
+		return
+	}
+
+	file, fileHeader, err := r.FormFile("file")
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 	defer file.Close()
@@ -52,8 +56,7 @@ func (c *ConversationStatsApi) FileUploadHandler(w http.ResponseWriter, r *http.
 
 	conversation, err := messenger.NewConversation(file)
 	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		_, _ = fmt.Fprintf(w, "<h1>400 Bad Request</h1>\n%s", err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
@@ -110,7 +113,7 @@ func (c *ConversationStatsApi) ConversationStatsHandler(w http.ResponseWriter, r
 
 	if !ok {
 		w.WriteHeader(http.StatusNotFound)
-		_, _ = fmt.Fprintf(w, "{\"error\": \"ID not found\"}")
+		_, _ = fmt.Fprint(w, "{\"error\": \"ID not found\"}")
 		return
 	}
 
