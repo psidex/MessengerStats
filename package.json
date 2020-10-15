@@ -1,0 +1,24 @@
+{
+  "name": "messengerstats",
+  "version": "0.0.1",
+  "description": "View statistics about your Messenger conversations",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/psidex/MessengerStats.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/psidex/MessengerStats/issues"
+  },
+  "homepage": "https://github.com/psidex/MessengerStats#readme",
+  "dependencies": {
+    "eslint": "^7.11.0",
+    "eslint-config-airbnb-base": "^14.2.0",
+    "eslint-plugin-import": "^2.22.1"
+  }
+}

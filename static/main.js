@@ -1,16 +1,16 @@
 // Note about canvas sizes:
 // https://www.chartjs.org/docs/latest/general/responsive.html#important-note
 
-let rgbColour = "rgb(0,198,255)";
+const rgbColour = 'rgb(0,198,255)';
 
 function createMessagesPerMonthChart(jsonData) {
-    let data = {
+    const data = {
         labels: [],
         datasets: [{
             data: [],
             borderColor: rgbColour,
-            lineTension: 0.25
-        }]
+            lineTension: 0.25,
+        }],
     };
 
     for (const year in jsonData.messages_per_month) {
@@ -20,30 +20,31 @@ function createMessagesPerMonthChart(jsonData) {
         }
     }
 
-    const ctx = document.querySelector("#messagesPerMonthChart").getContext("2d");
+    const ctx = document.querySelector('#messagesPerMonthChart').getContext('2d');
     new Chart(ctx, {
-        type: "line",
-        data: data,
+        type: 'line',
+        data,
         options: {
             title: {
                 display: true,
-                text: "Messages Sent Per Month"
+                text: 'Messages Sent Per Month',
             },
             legend: {
-                display: false
+                display: false,
             },
             maintainAspectRatio: false,
-        }
+        },
     });
 }
 
 function createMessagesPerUserChart(jsonData) {
-    let data = {
+    const data = {
         labels: [],
         datasets: [{
             data: [],
-            backgroundColor: rgbColour
-        }]
+            backgroundColor: [],
+            borderColor: rgbColour,
+        }],
     };
 
     for (const user in jsonData.messages_per_user) {
@@ -51,85 +52,86 @@ function createMessagesPerUserChart(jsonData) {
         data.datasets[0].data.push(jsonData.messages_per_user[user]);
     }
 
-    const ctx = document.querySelector("#messagesPerUserChart").getContext("2d");
+    const ctx = document.querySelector('#messagesPerUserChart').getContext('2d');
     new Chart(ctx, {
-        type: "bar",
-        data: data,
+        type: 'pie',
+        data,
         options: {
             title: {
                 display: true,
-                text: "Messages Sent Per User"
+                text: 'Messages Sent Per User',
             },
             legend: {
-                display: false
+                display: false,
             },
             maintainAspectRatio: false,
-            scales: {
-                yAxes: [{
-                    ticks: {
-                        beginAtZero: true
-                    }
-                }]
-            }
-        }
+            plugins: {
+                labels: {
+                    render: 'label',
+                },
+            },
+        },
     });
 }
 
 function createMessagesPerWeekdayChart(jsonData) {
-    let data = {
+    const data = {
         labels: [],
         datasets: [{
             data: [],
-            borderColor: rgbColour
-        }]
+            borderColor: rgbColour,
+        }],
     };
 
-    let weekdays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+    const weekdays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
     weekdays.forEach((weekday) => {
         data.labels.push(weekday);
         data.datasets[0].data.push(jsonData.messages_per_weekday[weekday]);
     });
 
-    const ctx = document.querySelector("#messagesPerWeekdayChart").getContext("2d");
+    const ctx = document.querySelector('#messagesPerWeekdayChart').getContext('2d');
     new Chart(ctx, {
-        type: "radar",
-        data: data,
+        type: 'radar',
+        data,
         options: {
             title: {
                 display: true,
-                text: "Total Messages Sent Per Weekday"
+                text: 'Total Messages Sent Per Weekday',
             },
             legend: {
-                display: false
+                display: false,
             },
             maintainAspectRatio: false,
             scale: {
                 ticks: {
-                    suggestedMin: 0
-                }
-            }
-        }
+                    suggestedMin: 0,
+                },
+            },
+        },
     });
 }
 
 function setTitle(titleText) {
-    document.getElementById("title").textContent = `Messenger Stats for conversation: ${titleText}`
+    document.getElementById('title').textContent = `${titleText}`;
 }
 
-window.addEventListener("load", async () => {
-    let currentUrl = new URL(window.location.href);
-    let id = currentUrl.searchParams.get("id");
+window.addEventListener('load', async () => {
+    const currentUrl = new URL(window.location.href);
+    const id = currentUrl.searchParams.get('id');
 
-    if (id === null)
+    if (id === null) {
         return;
+    }
 
-    let rawData = await fetch(`/api/stats?id=${id}`);
-    let data = await rawData.json();
+    const rawData = await fetch(`/api/stats?id=${id}`);
+    const data = await rawData.json();
 
-    if (data.error === "ID not found")
-        return alert("ID not found");
+    if (data.error === 'ID not found') {
+        alert('ID not found');
+        return;
+    }
 
-    setTitle(data["conversation_title"]);
+    setTitle(data.conversation_title);
     createMessagesPerMonthChart(data);
     createMessagesPerUserChart(data);
     createMessagesPerWeekdayChart(data);

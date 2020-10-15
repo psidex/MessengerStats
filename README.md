@@ -17,3 +17,9 @@ It uses basic HTML forms for data transfer, and the calculations for even lots o
 machine it takes ~200ms to upload, parse, and calculate statistics for a 20.8 MB conversation split over 11 files
 (Almost all of that time is from the calls to `ParseMultipartForm` and `UnmarshalJSON`, the actual statistics
 calculations currently take ~2ms per MB).
+
+## Credits
+
+- [water.css](https://watercss.kognise.dev/)
+- [chart.js](https://www.chartjs.org/)
+- [chartjs-plugin-labels](https://github.com/emn178/chartjs-plugin-labels)

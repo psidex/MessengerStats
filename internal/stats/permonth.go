@@ -5,6 +5,8 @@ import (
 	"time"
 )
 
+// TODO: If a year and/or month don't have any entries, set to 0 so it still shows on chart.
+
 // MessagesPerMonthCounter is for counting how many messages are sent per month.
 type MessagesPerMonthCounter struct {
 	MessagesPerYearMonth map[int]map[int]int

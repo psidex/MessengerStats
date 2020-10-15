@@ -7,25 +7,32 @@
         <meta name="description" content="View statistics about your Messenger conversations">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <link href="https://fonts.googleapis.com/css?family=Fira+Sans&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="light.min.css" type="text/css"/>
         <link rel="stylesheet" href="main.css" type="text/css"/>
-        <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.1/dist/Chart.min.js" integrity="sha256-RIfYIzpTkKTqDJeeVkrCaZQPOIkE/lferWiNSYXhrLY=" crossorigin="anonymous"></script>
+
+        <!-- TODO: Switch to highcharts -->
+        <script src="Chart.bundle.min.js"></script>
+        <script src="chartjs-plugin-labels.min.js"></script>
+
+        <script src="main.js" defer></script>
     </head>
     <body>
-        <h1 id="title">Messenger Stats</h1>
+        <h1>Messenger Stats</h1>
+        <h2 id="title"></h2>
         <form enctype="multipart/form-data" action="/upload" method="post">
             <input type="file" name="messenger_files" multiple/>
-            <input type="submit" value="Upload" />
+            <input type="submit" value="Get Stats" />
         </form>
         <div class="chart-container">
             <canvas id="messagesPerMonthChart"></canvas>
         </div>
-        <div class="chart-container">
-            <canvas id="messagesPerUserChart"></canvas>
+        <div class="side-by-side">
+            <div class="chart-container">
+                <canvas id="messagesPerUserChart"></canvas>
+            </div>
+            <div class="chart-container">
+                <canvas id="messagesPerWeekdayChart"></canvas>
+            </div>
         </div>
-        <div class="chart-container">
-            <canvas id="messagesPerWeekdayChart"></canvas>
-        </div>
-        <script src="chartcreator.js"></script>
     </body>
 </html>
