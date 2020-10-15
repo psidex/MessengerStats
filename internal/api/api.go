@@ -50,7 +50,7 @@ func (c *ConversationStatsApi) FileUploadHandler(w http.ResponseWriter, r *http.
 	}
 
 	mpuCounter := stats.NewMessagesPerUserCounter()
-	mpdCounter := stats.NewMessagesPerWeekdayCounter()
+	mpwdCounter := stats.NewMessagesPerWeekdayCounter()
 	mpmCounter := stats.NewMessagesPerMonthCounter()
 
 	title := ""
@@ -85,7 +85,7 @@ func (c *ConversationStatsApi) FileUploadHandler(w http.ResponseWriter, r *http.
 
 		for _, message := range conversation.Messages {
 			mpuCounter.Update(message)
-			mpdCounter.Update(message)
+			mpwdCounter.Update(message)
 			mpmCounter.Update(message)
 		}
 	}
@@ -97,7 +97,7 @@ func (c *ConversationStatsApi) FileUploadHandler(w http.ResponseWriter, r *http.
 		title,
 		mpmCounter.MessagesPerYearMonth,
 		mpuCounter.MessagesPerUser,
-		mpdCounter.MessagesPerDay,
+		mpwdCounter.MessagesPerDay,
 	}
 	c.mu.Unlock()
 
