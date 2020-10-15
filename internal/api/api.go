@@ -90,6 +90,8 @@ func (c *ConversationStatsApi) FileUploadHandler(w http.ResponseWriter, r *http.
 		}
 	}
 
+	mpmCounter.Finalize()
+
 	log.Printf("File parse and calculations took %s", time.Since(startTime))
 
 	c.mu.Lock()
