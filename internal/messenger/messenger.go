@@ -1,7 +1,6 @@
 package messenger
 
 import (
-	"encoding/json"
 	"io"
 	"io/ioutil"
 )
@@ -65,7 +64,7 @@ func NewConversation(reader io.Reader) (*Conversation, error) {
 	if err != nil {
 		return &Conversation{}, err
 	}
-	err = json.Unmarshal(bytes, conv)
+	err = conv.UnmarshalJSON(bytes)
 	if err != nil {
 		return &Conversation{}, err
 	}
