@@ -40,186 +40,6 @@ func easyjson74542c9fDecodeGithubComPsidexMessengerStatsInternalMessenger(in *jl
 			out.SenderName = string(in.String())
 		case "timestamp_ms":
 			out.TimestampMs = int64(in.Int64())
-		case "content":
-			out.Content = string(in.String())
-		case "type":
-			out.Type = string(in.String())
-		case "photos":
-			if in.IsNull() {
-				in.Skip()
-				out.Photos = nil
-			} else {
-				in.Delim('[')
-				if out.Photos == nil {
-					if !in.IsDelim(']') {
-						out.Photos = make([]struct {
-							URI               string `json:"uri"`
-							CreationTimestamp int    `json:"creation_timestamp"`
-						}, 0, 2)
-					} else {
-						out.Photos = []struct {
-							URI               string `json:"uri"`
-							CreationTimestamp int    `json:"creation_timestamp"`
-						}{}
-					}
-				} else {
-					out.Photos = (out.Photos)[:0]
-				}
-				for !in.IsDelim(']') {
-					var v1 struct {
-						URI               string `json:"uri"`
-						CreationTimestamp int    `json:"creation_timestamp"`
-					}
-					easyjson74542c9fDecode(in, &v1)
-					out.Photos = append(out.Photos, v1)
-					in.WantComma()
-				}
-				in.Delim(']')
-			}
-		case "share":
-			easyjson74542c9fDecode1(in, &out.Share)
-		case "gifs":
-			if in.IsNull() {
-				in.Skip()
-				out.Gifs = nil
-			} else {
-				in.Delim('[')
-				if out.Gifs == nil {
-					if !in.IsDelim(']') {
-						out.Gifs = make([]struct {
-							URI string `json:"uri"`
-						}, 0, 4)
-					} else {
-						out.Gifs = []struct {
-							URI string `json:"uri"`
-						}{}
-					}
-				} else {
-					out.Gifs = (out.Gifs)[:0]
-				}
-				for !in.IsDelim(']') {
-					var v2 struct {
-						URI string `json:"uri"`
-					}
-					easyjson74542c9fDecode2(in, &v2)
-					out.Gifs = append(out.Gifs, v2)
-					in.WantComma()
-				}
-				in.Delim(']')
-			}
-		case "videos":
-			if in.IsNull() {
-				in.Skip()
-				out.Videos = nil
-			} else {
-				in.Delim('[')
-				if out.Videos == nil {
-					if !in.IsDelim(']') {
-						out.Videos = make([]struct {
-							URI               string `json:"uri"`
-							CreationTimestamp int    `json:"creation_timestamp"`
-							Thumbnail         struct {
-								URI string `json:"uri"`
-							} `json:"thumbnail"`
-						}, 0, 1)
-					} else {
-						out.Videos = []struct {
-							URI               string `json:"uri"`
-							CreationTimestamp int    `json:"creation_timestamp"`
-							Thumbnail         struct {
-								URI string `json:"uri"`
-							} `json:"thumbnail"`
-						}{}
-					}
-				} else {
-					out.Videos = (out.Videos)[:0]
-				}
-				for !in.IsDelim(']') {
-					var v3 struct {
-						URI               string `json:"uri"`
-						CreationTimestamp int    `json:"creation_timestamp"`
-						Thumbnail         struct {
-							URI string `json:"uri"`
-						} `json:"thumbnail"`
-					}
-					easyjson74542c9fDecode3(in, &v3)
-					out.Videos = append(out.Videos, v3)
-					in.WantComma()
-				}
-				in.Delim(']')
-			}
-		case "reactions":
-			if in.IsNull() {
-				in.Skip()
-				out.Reactions = nil
-			} else {
-				in.Delim('[')
-				if out.Reactions == nil {
-					if !in.IsDelim(']') {
-						out.Reactions = make([]struct {
-							Reaction string `json:"reaction"`
-							Actor    string `json:"actor"`
-						}, 0, 2)
-					} else {
-						out.Reactions = []struct {
-							Reaction string `json:"reaction"`
-							Actor    string `json:"actor"`
-						}{}
-					}
-				} else {
-					out.Reactions = (out.Reactions)[:0]
-				}
-				for !in.IsDelim(']') {
-					var v4 struct {
-						Reaction string `json:"reaction"`
-						Actor    string `json:"actor"`
-					}
-					easyjson74542c9fDecode4(in, &v4)
-					out.Reactions = append(out.Reactions, v4)
-					in.WantComma()
-				}
-				in.Delim(']')
-			}
-		case "ip":
-			out.IP = string(in.String())
-		case "sticker":
-			easyjson74542c9fDecode2(in, &out.Sticker)
-		case "files":
-			if in.IsNull() {
-				in.Skip()
-				out.Files = nil
-			} else {
-				in.Delim('[')
-				if out.Files == nil {
-					if !in.IsDelim(']') {
-						out.Files = make([]struct {
-							URI               string `json:"uri"`
-							CreationTimestamp int    `json:"creation_timestamp"`
-						}, 0, 2)
-					} else {
-						out.Files = []struct {
-							URI               string `json:"uri"`
-							CreationTimestamp int    `json:"creation_timestamp"`
-						}{}
-					}
-				} else {
-					out.Files = (out.Files)[:0]
-				}
-				for !in.IsDelim(']') {
-					var v5 struct {
-						URI               string `json:"uri"`
-						CreationTimestamp int    `json:"creation_timestamp"`
-					}
-					easyjson74542c9fDecode(in, &v5)
-					out.Files = append(out.Files, v5)
-					in.WantComma()
-				}
-				in.Delim(']')
-			}
-		case "call_duration":
-			out.CallDuration = int(in.Int())
-		case "missed":
-			out.Missed = bool(in.Bool())
 		default:
 			in.SkipRecursive()
 		}
@@ -243,111 +63,6 @@ func easyjson74542c9fEncodeGithubComPsidexMessengerStatsInternalMessenger(out *j
 		const prefix string = ",\"timestamp_ms\":"
 		out.RawString(prefix)
 		out.Int64(int64(in.TimestampMs))
-	}
-	if in.Content != "" {
-		const prefix string = ",\"content\":"
-		out.RawString(prefix)
-		out.String(string(in.Content))
-	}
-	{
-		const prefix string = ",\"type\":"
-		out.RawString(prefix)
-		out.String(string(in.Type))
-	}
-	if len(in.Photos) != 0 {
-		const prefix string = ",\"photos\":"
-		out.RawString(prefix)
-		{
-			out.RawByte('[')
-			for v6, v7 := range in.Photos {
-				if v6 > 0 {
-					out.RawByte(',')
-				}
-				easyjson74542c9fEncode(out, v7)
-			}
-			out.RawByte(']')
-		}
-	}
-	if true {
-		const prefix string = ",\"share\":"
-		out.RawString(prefix)
-		easyjson74542c9fEncode1(out, in.Share)
-	}
-	if len(in.Gifs) != 0 {
-		const prefix string = ",\"gifs\":"
-		out.RawString(prefix)
-		{
-			out.RawByte('[')
-			for v8, v9 := range in.Gifs {
-				if v8 > 0 {
-					out.RawByte(',')
-				}
-				easyjson74542c9fEncode2(out, v9)
-			}
-			out.RawByte(']')
-		}
-	}
-	if len(in.Videos) != 0 {
-		const prefix string = ",\"videos\":"
-		out.RawString(prefix)
-		{
-			out.RawByte('[')
-			for v10, v11 := range in.Videos {
-				if v10 > 0 {
-					out.RawByte(',')
-				}
-				easyjson74542c9fEncode3(out, v11)
-			}
-			out.RawByte(']')
-		}
-	}
-	if len(in.Reactions) != 0 {
-		const prefix string = ",\"reactions\":"
-		out.RawString(prefix)
-		{
-			out.RawByte('[')
-			for v12, v13 := range in.Reactions {
-				if v12 > 0 {
-					out.RawByte(',')
-				}
-				easyjson74542c9fEncode4(out, v13)
-			}
-			out.RawByte(']')
-		}
-	}
-	if in.IP != "" {
-		const prefix string = ",\"ip\":"
-		out.RawString(prefix)
-		out.String(string(in.IP))
-	}
-	if true {
-		const prefix string = ",\"sticker\":"
-		out.RawString(prefix)
-		easyjson74542c9fEncode2(out, in.Sticker)
-	}
-	if len(in.Files) != 0 {
-		const prefix string = ",\"files\":"
-		out.RawString(prefix)
-		{
-			out.RawByte('[')
-			for v14, v15 := range in.Files {
-				if v14 > 0 {
-					out.RawByte(',')
-				}
-				easyjson74542c9fEncode(out, v15)
-			}
-			out.RawByte(']')
-		}
-	}
-	if in.CallDuration != 0 {
-		const prefix string = ",\"call_duration\":"
-		out.RawString(prefix)
-		out.Int(int(in.CallDuration))
-	}
-	if in.Missed {
-		const prefix string = ",\"missed\":"
-		out.RawString(prefix)
-		out.Bool(bool(in.Missed))
 	}
 	out.RawByte('}')
 }
@@ -375,285 +90,6 @@ func (v *Message) UnmarshalJSON(data []byte) error {
 func (v *Message) UnmarshalEasyJSON(l *jlexer.Lexer) {
 	easyjson74542c9fDecodeGithubComPsidexMessengerStatsInternalMessenger(l, v)
 }
-func easyjson74542c9fDecode4(in *jlexer.Lexer, out *struct {
-	Reaction string `json:"reaction"`
-	Actor    string `json:"actor"`
-}) {
-	isTopLevel := in.IsStart()
-	if in.IsNull() {
-		if isTopLevel {
-			in.Consumed()
-		}
-		in.Skip()
-		return
-	}
-	in.Delim('{')
-	for !in.IsDelim('}') {
-		key := in.UnsafeFieldName(false)
-		in.WantColon()
-		if in.IsNull() {
-			in.Skip()
-			in.WantComma()
-			continue
-		}
-		switch key {
-		case "reaction":
-			out.Reaction = string(in.String())
-		case "actor":
-			out.Actor = string(in.String())
-		default:
-			in.SkipRecursive()
-		}
-		in.WantComma()
-	}
-	in.Delim('}')
-	if isTopLevel {
-		in.Consumed()
-	}
-}
-func easyjson74542c9fEncode4(out *jwriter.Writer, in struct {
-	Reaction string `json:"reaction"`
-	Actor    string `json:"actor"`
-}) {
-	out.RawByte('{')
-	first := true
-	_ = first
-	{
-		const prefix string = ",\"reaction\":"
-		out.RawString(prefix[1:])
-		out.String(string(in.Reaction))
-	}
-	{
-		const prefix string = ",\"actor\":"
-		out.RawString(prefix)
-		out.String(string(in.Actor))
-	}
-	out.RawByte('}')
-}
-func easyjson74542c9fDecode3(in *jlexer.Lexer, out *struct {
-	URI               string `json:"uri"`
-	CreationTimestamp int    `json:"creation_timestamp"`
-	Thumbnail         struct {
-		URI string `json:"uri"`
-	} `json:"thumbnail"`
-}) {
-	isTopLevel := in.IsStart()
-	if in.IsNull() {
-		if isTopLevel {
-			in.Consumed()
-		}
-		in.Skip()
-		return
-	}
-	in.Delim('{')
-	for !in.IsDelim('}') {
-		key := in.UnsafeFieldName(false)
-		in.WantColon()
-		if in.IsNull() {
-			in.Skip()
-			in.WantComma()
-			continue
-		}
-		switch key {
-		case "uri":
-			out.URI = string(in.String())
-		case "creation_timestamp":
-			out.CreationTimestamp = int(in.Int())
-		case "thumbnail":
-			easyjson74542c9fDecode2(in, &out.Thumbnail)
-		default:
-			in.SkipRecursive()
-		}
-		in.WantComma()
-	}
-	in.Delim('}')
-	if isTopLevel {
-		in.Consumed()
-	}
-}
-func easyjson74542c9fEncode3(out *jwriter.Writer, in struct {
-	URI               string `json:"uri"`
-	CreationTimestamp int    `json:"creation_timestamp"`
-	Thumbnail         struct {
-		URI string `json:"uri"`
-	} `json:"thumbnail"`
-}) {
-	out.RawByte('{')
-	first := true
-	_ = first
-	{
-		const prefix string = ",\"uri\":"
-		out.RawString(prefix[1:])
-		out.String(string(in.URI))
-	}
-	{
-		const prefix string = ",\"creation_timestamp\":"
-		out.RawString(prefix)
-		out.Int(int(in.CreationTimestamp))
-	}
-	{
-		const prefix string = ",\"thumbnail\":"
-		out.RawString(prefix)
-		easyjson74542c9fEncode2(out, in.Thumbnail)
-	}
-	out.RawByte('}')
-}
-func easyjson74542c9fDecode2(in *jlexer.Lexer, out *struct {
-	URI string `json:"uri"`
-}) {
-	isTopLevel := in.IsStart()
-	if in.IsNull() {
-		if isTopLevel {
-			in.Consumed()
-		}
-		in.Skip()
-		return
-	}
-	in.Delim('{')
-	for !in.IsDelim('}') {
-		key := in.UnsafeFieldName(false)
-		in.WantColon()
-		if in.IsNull() {
-			in.Skip()
-			in.WantComma()
-			continue
-		}
-		switch key {
-		case "uri":
-			out.URI = string(in.String())
-		default:
-			in.SkipRecursive()
-		}
-		in.WantComma()
-	}
-	in.Delim('}')
-	if isTopLevel {
-		in.Consumed()
-	}
-}
-func easyjson74542c9fEncode2(out *jwriter.Writer, in struct {
-	URI string `json:"uri"`
-}) {
-	out.RawByte('{')
-	first := true
-	_ = first
-	{
-		const prefix string = ",\"uri\":"
-		out.RawString(prefix[1:])
-		out.String(string(in.URI))
-	}
-	out.RawByte('}')
-}
-func easyjson74542c9fDecode1(in *jlexer.Lexer, out *struct {
-	Link      string `json:"link"`
-	ShareText string `json:"share_text"`
-}) {
-	isTopLevel := in.IsStart()
-	if in.IsNull() {
-		if isTopLevel {
-			in.Consumed()
-		}
-		in.Skip()
-		return
-	}
-	in.Delim('{')
-	for !in.IsDelim('}') {
-		key := in.UnsafeFieldName(false)
-		in.WantColon()
-		if in.IsNull() {
-			in.Skip()
-			in.WantComma()
-			continue
-		}
-		switch key {
-		case "link":
-			out.Link = string(in.String())
-		case "share_text":
-			out.ShareText = string(in.String())
-		default:
-			in.SkipRecursive()
-		}
-		in.WantComma()
-	}
-	in.Delim('}')
-	if isTopLevel {
-		in.Consumed()
-	}
-}
-func easyjson74542c9fEncode1(out *jwriter.Writer, in struct {
-	Link      string `json:"link"`
-	ShareText string `json:"share_text"`
-}) {
-	out.RawByte('{')
-	first := true
-	_ = first
-	{
-		const prefix string = ",\"link\":"
-		out.RawString(prefix[1:])
-		out.String(string(in.Link))
-	}
-	{
-		const prefix string = ",\"share_text\":"
-		out.RawString(prefix)
-		out.String(string(in.ShareText))
-	}
-	out.RawByte('}')
-}
-func easyjson74542c9fDecode(in *jlexer.Lexer, out *struct {
-	URI               string `json:"uri"`
-	CreationTimestamp int    `json:"creation_timestamp"`
-}) {
-	isTopLevel := in.IsStart()
-	if in.IsNull() {
-		if isTopLevel {
-			in.Consumed()
-		}
-		in.Skip()
-		return
-	}
-	in.Delim('{')
-	for !in.IsDelim('}') {
-		key := in.UnsafeFieldName(false)
-		in.WantColon()
-		if in.IsNull() {
-			in.Skip()
-			in.WantComma()
-			continue
-		}
-		switch key {
-		case "uri":
-			out.URI = string(in.String())
-		case "creation_timestamp":
-			out.CreationTimestamp = int(in.Int())
-		default:
-			in.SkipRecursive()
-		}
-		in.WantComma()
-	}
-	in.Delim('}')
-	if isTopLevel {
-		in.Consumed()
-	}
-}
-func easyjson74542c9fEncode(out *jwriter.Writer, in struct {
-	URI               string `json:"uri"`
-	CreationTimestamp int    `json:"creation_timestamp"`
-}) {
-	out.RawByte('{')
-	first := true
-	_ = first
-	{
-		const prefix string = ",\"uri\":"
-		out.RawString(prefix[1:])
-		out.String(string(in.URI))
-	}
-	{
-		const prefix string = ",\"creation_timestamp\":"
-		out.RawString(prefix)
-		out.Int(int(in.CreationTimestamp))
-	}
-	out.RawByte('}')
-}
 func easyjson74542c9fDecodeGithubComPsidexMessengerStatsInternalMessenger1(in *jlexer.Lexer, out *Conversation) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
@@ -673,35 +109,6 @@ func easyjson74542c9fDecodeGithubComPsidexMessengerStatsInternalMessenger1(in *j
 			continue
 		}
 		switch key {
-		case "participants":
-			if in.IsNull() {
-				in.Skip()
-				out.Participants = nil
-			} else {
-				in.Delim('[')
-				if out.Participants == nil {
-					if !in.IsDelim(']') {
-						out.Participants = make([]struct {
-							Name string `json:"name"`
-						}, 0, 4)
-					} else {
-						out.Participants = []struct {
-							Name string `json:"name"`
-						}{}
-					}
-				} else {
-					out.Participants = (out.Participants)[:0]
-				}
-				for !in.IsDelim(']') {
-					var v16 struct {
-						Name string `json:"name"`
-					}
-					easyjson74542c9fDecode5(in, &v16)
-					out.Participants = append(out.Participants, v16)
-					in.WantComma()
-				}
-				in.Delim(']')
-			}
 		case "messages":
 			if in.IsNull() {
 				in.Skip()
@@ -710,7 +117,7 @@ func easyjson74542c9fDecodeGithubComPsidexMessengerStatsInternalMessenger1(in *j
 				in.Delim('[')
 				if out.Messages == nil {
 					if !in.IsDelim(']') {
-						out.Messages = make([]Message, 0, 0)
+						out.Messages = make([]Message, 0, 2)
 					} else {
 						out.Messages = []Message{}
 					}
@@ -718,21 +125,15 @@ func easyjson74542c9fDecodeGithubComPsidexMessengerStatsInternalMessenger1(in *j
 					out.Messages = (out.Messages)[:0]
 				}
 				for !in.IsDelim(']') {
-					var v17 Message
-					(v17).UnmarshalEasyJSON(in)
-					out.Messages = append(out.Messages, v17)
+					var v1 Message
+					(v1).UnmarshalEasyJSON(in)
+					out.Messages = append(out.Messages, v1)
 					in.WantComma()
 				}
 				in.Delim(']')
 			}
 		case "title":
 			out.Title = string(in.String())
-		case "is_still_participant":
-			out.IsStillParticipant = bool(in.Bool())
-		case "thread_type":
-			out.ThreadType = string(in.String())
-		case "thread_path":
-			out.ThreadPath = string(in.String())
 		default:
 			in.SkipRecursive()
 		}
@@ -748,33 +149,17 @@ func easyjson74542c9fEncodeGithubComPsidexMessengerStatsInternalMessenger1(out *
 	first := true
 	_ = first
 	{
-		const prefix string = ",\"participants\":"
-		out.RawString(prefix[1:])
-		if in.Participants == nil && (out.Flags&jwriter.NilSliceAsEmpty) == 0 {
-			out.RawString("null")
-		} else {
-			out.RawByte('[')
-			for v18, v19 := range in.Participants {
-				if v18 > 0 {
-					out.RawByte(',')
-				}
-				easyjson74542c9fEncode5(out, v19)
-			}
-			out.RawByte(']')
-		}
-	}
-	{
 		const prefix string = ",\"messages\":"
-		out.RawString(prefix)
+		out.RawString(prefix[1:])
 		if in.Messages == nil && (out.Flags&jwriter.NilSliceAsEmpty) == 0 {
 			out.RawString("null")
 		} else {
 			out.RawByte('[')
-			for v20, v21 := range in.Messages {
-				if v20 > 0 {
+			for v2, v3 := range in.Messages {
+				if v2 > 0 {
 					out.RawByte(',')
 				}
-				(v21).MarshalEasyJSON(out)
+				(v3).MarshalEasyJSON(out)
 			}
 			out.RawByte(']')
 		}
@@ -783,21 +168,6 @@ func easyjson74542c9fEncodeGithubComPsidexMessengerStatsInternalMessenger1(out *
 		const prefix string = ",\"title\":"
 		out.RawString(prefix)
 		out.String(string(in.Title))
-	}
-	{
-		const prefix string = ",\"is_still_participant\":"
-		out.RawString(prefix)
-		out.Bool(bool(in.IsStillParticipant))
-	}
-	{
-		const prefix string = ",\"thread_type\":"
-		out.RawString(prefix)
-		out.String(string(in.ThreadType))
-	}
-	{
-		const prefix string = ",\"thread_path\":"
-		out.RawString(prefix)
-		out.String(string(in.ThreadPath))
 	}
 	out.RawByte('}')
 }
@@ -824,50 +194,4 @@ func (v *Conversation) UnmarshalJSON(data []byte) error {
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *Conversation) UnmarshalEasyJSON(l *jlexer.Lexer) {
 	easyjson74542c9fDecodeGithubComPsidexMessengerStatsInternalMessenger1(l, v)
-}
-func easyjson74542c9fDecode5(in *jlexer.Lexer, out *struct {
-	Name string `json:"name"`
-}) {
-	isTopLevel := in.IsStart()
-	if in.IsNull() {
-		if isTopLevel {
-			in.Consumed()
-		}
-		in.Skip()
-		return
-	}
-	in.Delim('{')
-	for !in.IsDelim('}') {
-		key := in.UnsafeFieldName(false)
-		in.WantColon()
-		if in.IsNull() {
-			in.Skip()
-			in.WantComma()
-			continue
-		}
-		switch key {
-		case "name":
-			out.Name = string(in.String())
-		default:
-			in.SkipRecursive()
-		}
-		in.WantComma()
-	}
-	in.Delim('}')
-	if isTopLevel {
-		in.Consumed()
-	}
-}
-func easyjson74542c9fEncode5(out *jwriter.Writer, in struct {
-	Name string `json:"name"`
-}) {
-	out.RawByte('{')
-	first := true
-	_ = first
-	{
-		const prefix string = ",\"name\":"
-		out.RawString(prefix[1:])
-		out.String(string(in.Name))
-	}
-	out.RawByte('}')
 }
