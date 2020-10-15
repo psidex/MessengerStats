@@ -5,12 +5,12 @@ import (
 )
 
 // MessagesPerUserCounter is for counting how many messages are sent per user.
+// Pointers don't need to be used anywhere as the only field is a map which itself is a reference type.
 type MessagesPerUserCounter struct {
 	MessagesPerUser map[string]int
 }
 
 // NewMessagesPerUserCounter creates a new MessagesPerUserCounter.
-// Pointers aren't used as the only field is a map which itself is a reference type.
 func NewMessagesPerUserCounter() MessagesPerUserCounter {
 	m := MessagesPerUserCounter{}
 	m.MessagesPerUser = make(map[string]int)

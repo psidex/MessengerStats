@@ -58,7 +58,7 @@ type Conversation struct {
 	ThreadPath         string    `json:"thread_path"`
 }
 
-// NewConversation unmarshalls the data from the io.Reader into a new Conversation struct.
+// NewConversation attempts to unmarshal the data from the io.Reader into a new Conversation struct.
 func NewConversation(reader io.Reader) (*Conversation, error) {
 	conv := &Conversation{}
 	bytes, err := ioutil.ReadAll(reader)

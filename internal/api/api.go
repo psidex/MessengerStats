@@ -7,6 +7,7 @@ import (
 	"github.com/psidex/MessengerStats/internal/stats"
 	"github.com/segmentio/ksuid"
 	"log"
+	"mime/multipart"
 	"net/http"
 	"net/url"
 	"sync"
@@ -23,8 +24,8 @@ type conversationStats struct {
 
 // ConversationStatsApi contains the data and functions for generating conversation statistics.
 type ConversationStatsApi struct {
-	savedStats map[string]*conversationStats // [id]data
-	mu         *sync.Mutex
+	savedStats map[string]*conversationStats // Map of generated id : struct pointer
+	mu         *sync.Mutex                   // Controls access to savedStats
 }
 
 func NewConversationStatsApi() *ConversationStatsApi {
@@ -36,48 +37,64 @@ func NewConversationStatsApi() *ConversationStatsApi {
 
 // FileUploadHandler is a HTTP handler that takes a Messenger JSON file, parses it, and saves the stats in memory.
 // Expects a POST request.
-// TODO: Allow uploading multiple files from a single conversation at the same time.
 func (c *ConversationStatsApi) FileUploadHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method != "POST" {
-		w.WriteHeader(http.StatusBadRequest)
-		_, _ = fmt.Fprint(w, "<h1>400 Bad Request</h1>\nMust send a POST request")
+		http.Error(w, "must send a POST request to this endpoint", http.StatusBadRequest)
 		return
 	}
 
-	file, fileHeader, err := r.FormFile("file")
-	if err != nil {
+	const _500MB = 1024 * 1024 * 500 // Use up to 500MB of RAM, rest goes on disk.
+	if err := r.ParseMultipartForm(_500MB); nil != err {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	defer file.Close()
-
-	log.Printf("Uploaded File: %+v\n", fileHeader.Filename)
-	log.Printf("File Size: %+v\n", fileHeader.Size)
-
-	conversation, err := messenger.NewConversation(file)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	id := ksuid.New().String()
-	startTime := time.Now()
 
 	mpuCounter := stats.NewMessagesPerUserCounter()
 	mpdCounter := stats.NewMessagesPerWeekdayCounter()
 	mpmCounter := stats.NewMessagesPerMonthCounter()
 
-	for _, message := range conversation.Messages {
-		mpuCounter.Update(message)
-		mpdCounter.Update(message)
-		mpmCounter.Update(message)
+	title := ""
+	id := ksuid.New().String()
+	startTime := time.Now()
+
+	headers, ok := r.MultipartForm.File["messenger_files"]
+	if !ok {
+		http.Error(w, "invalid request, could not find messenger_files in form", http.StatusInternalServerError)
+		return
 	}
 
-	log.Printf("Statistics calculations took %s", time.Since(startTime))
+	for _, header := range headers {
+		var (
+			file multipart.File
+			err  error
+		)
+
+		if file, err = header.Open(); err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		conversation, err := messenger.NewConversation(file)
+		_ = file.Close()
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		title = conversation.Title
+
+		for _, message := range conversation.Messages {
+			mpuCounter.Update(message)
+			mpdCounter.Update(message)
+			mpmCounter.Update(message)
+		}
+	}
+
+	log.Printf("File parse and calculations took %s", time.Since(startTime))
 
 	c.mu.Lock()
 	c.savedStats[id] = &conversationStats{
-		conversation.Title,
+		title,
 		mpmCounter.MessagesPerYearMonth,
 		mpuCounter.MessagesPerUser,
 		mpdCounter.MessagesPerDay,
