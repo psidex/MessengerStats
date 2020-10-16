@@ -25,11 +25,19 @@ label, input {
     padding: 0.5em;
 }
 
-.chart-container {
-    height: 35vh;
-    padding-bottom: 1em;
+.chart {
+    margin-top: 1em;
 }
 
-.side-by-side > div {
-    display: inline-block;
+.full-width-chart {
+    width: 100%;
+}
+
+.half-width-chart {
+    width: 50%;
+}
+
+.half-width-chart-container {
+    display: flex;
+    width: 100%;
 }

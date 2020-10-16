@@ -51,12 +51,12 @@ func (m MessagesPerMonthCounter) Finalize() {
 	firstYear := keys[0]
 	currentYear := time.Now().Year()
 
+	// TODO: Will set all months to 0 even if not happened yet (important for first and last year)
 	// From the first year to current year.
 	for iterYear := firstYear; iterYear <= currentYear; iterYear++ {
 		// If there is data for that year.
 		if _, ok := m.MessagesPerYearMonth[iterYear]; ok {
 			// For each month.
-			// TODO: Will iterate all months in iterYear even if not happened yet (important for first and last year)
 			for iterMonth := 1; iterMonth <= 12; iterMonth++ {
 				// If there is not data, set the value to 0 (before there would have been no such key).
 				if _, ok := m.MessagesPerYearMonth[iterYear][iterMonth]; !ok {

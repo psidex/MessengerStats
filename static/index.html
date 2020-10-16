@@ -7,13 +7,11 @@
         <meta name="description" content="View statistics about your Messenger conversations">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <link rel="stylesheet" href="light.min.css" type="text/css"/>
+        <link rel="stylesheet" href="water.light.min.css" type="text/css"/>
         <link rel="stylesheet" href="main.css" type="text/css"/>
 
-        <!-- TODO: Switch to highcharts -->
-        <script src="Chart.bundle.min.js"></script>
-        <script src="chartjs-plugin-labels.min.js"></script>
-
+        <script src="highcharts.js"></script>
+        <script src="highcharts-more.js"></script>
         <script src="main.js" defer></script>
     </head>
     <body>
@@ -23,16 +21,10 @@
             <input type="file" name="messenger_files" multiple/>
             <input type="submit" value="Get Stats" />
         </form>
-        <div class="chart-container">
-            <canvas id="messagesPerMonthChart"></canvas>
-        </div>
-        <div class="side-by-side">
-            <div class="chart-container">
-                <canvas id="messagesPerUserChart"></canvas>
-            </div>
-            <div class="chart-container">
-                <canvas id="messagesPerWeekdayChart"></canvas>
-            </div>
+        <div class="chart full-with-chart" id="messages-per-month-chart"></div>
+        <div class="half-width-chart-container">
+            <div class="chart half-width-chart" id="messages-per-user-chart"></div>
+            <div class="chart half-width-chart" id="messages-per-weekday-chart"></div>
         </div>
     </body>
 </html>

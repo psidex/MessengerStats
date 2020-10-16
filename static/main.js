@@ -1,112 +1,64 @@
-// Note about canvas sizes:
-// https://www.chartjs.org/docs/latest/general/responsive.html#important-note
-
-const rgbColour = 'rgb(0,198,255)';
+const messengerColour = 'rgb(0,198,255)';
 
 function createMessagesPerMonthChart(jsonData) {
-    const data = {
-        labels: [],
-        datasets: [{
-            data: [],
-            borderColor: rgbColour,
-            lineTension: 0.25,
-        }],
-    };
+    const data = [];
+    const categories = [];
 
     for (const year in jsonData.messages_per_month) {
         for (const month in jsonData.messages_per_month[year]) {
-            data.labels.push(`${year}-${month}`);
-            data.datasets[0].data.push(jsonData.messages_per_month[year][month]);
+            categories.push(`${year}-${month}`);
+            data.push(jsonData.messages_per_month[year][month]);
         }
     }
 
-    const ctx = document.querySelector('#messagesPerMonthChart').getContext('2d');
-    new Chart(ctx, {
-        type: 'line',
-        data,
-        options: {
-            title: {
-                display: true,
-                text: 'Messages Sent Per Month',
-            },
-            legend: {
-                display: false,
-            },
-            maintainAspectRatio: false,
+    Highcharts.chart('messages-per-month-chart', {
+        chart: { type: 'line' },
+        title: { text: 'Messages Per Month' },
+        xAxis: { categories },
+        yAxis: { title: { text: 'Messages Sent' } },
+        series: [{ name: 'Messages Sent', data }],
+        legend: { enabled: false },
+        plotOptions: {
+            series: { lineWidth: 3 },
+            line: { color: messengerColour, marker: { enabled: false } },
         },
     });
 }
 
 function createMessagesPerUserChart(jsonData) {
-    const data = {
-        labels: [],
-        datasets: [{
-            data: [],
-            backgroundColor: [],
-            borderColor: rgbColour,
-        }],
-    };
+    const data = [];
 
     for (const user in jsonData.messages_per_user) {
-        data.labels.push(user);
-        data.datasets[0].data.push(jsonData.messages_per_user[user]);
+        data.push({
+            name: user,
+            y: jsonData.messages_per_user[user],
+        });
     }
 
-    const ctx = document.querySelector('#messagesPerUserChart').getContext('2d');
-    new Chart(ctx, {
-        type: 'pie',
-        data,
-        options: {
-            title: {
-                display: true,
-                text: 'Messages Sent Per User',
-            },
-            legend: {
-                display: false,
-            },
-            maintainAspectRatio: false,
-            plugins: {
-                labels: {
-                    render: 'label',
-                },
-            },
-        },
+    Highcharts.chart('messages-per-user-chart', {
+        chart: { type: 'pie' },
+        title: { text: 'Messages Per User' },
+        series: [{ name: 'Messages Sent', data }],
     });
 }
 
 function createMessagesPerWeekdayChart(jsonData) {
-    const data = {
-        labels: [],
-        datasets: [{
-            data: [],
-            borderColor: rgbColour,
-        }],
-    };
+    const data = [];
+    const categories = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
-    const weekdays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
-    weekdays.forEach((weekday) => {
-        data.labels.push(weekday);
-        data.datasets[0].data.push(jsonData.messages_per_weekday[weekday]);
+    categories.forEach((weekday) => {
+        data.push(jsonData.messages_per_weekday[weekday]);
     });
 
-    const ctx = document.querySelector('#messagesPerWeekdayChart').getContext('2d');
-    new Chart(ctx, {
-        type: 'radar',
-        data,
-        options: {
-            title: {
-                display: true,
-                text: 'Total Messages Sent Per Weekday',
-            },
-            legend: {
-                display: false,
-            },
-            maintainAspectRatio: false,
-            scale: {
-                ticks: {
-                    suggestedMin: 0,
-                },
-            },
+    Highcharts.chart('messages-per-weekday-chart', {
+        chart: { polar: true, type: 'line' },
+        title: { text: 'Messages Per Weekday' },
+        xAxis: { categories },
+        yAxis: { min: 0 },
+        series: [{ name: 'Messages Sent', data }],
+        plotOptions: {
+            series: { lineWidth: 3 },
+            line: { color: messengerColour, marker: { enabled: false } },
         },
     });
 }

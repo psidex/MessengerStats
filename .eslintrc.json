@@ -14,7 +14,9 @@
     "indent": ["error", 4],
     "no-restricted-syntax": "off",
     "import/extensions": "off",
-    "no-undef": "off",
     "no-new": "off"
+  },
+  "globals": {
+    "Highcharts": true
   }
 }
