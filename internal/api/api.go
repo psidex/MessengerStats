@@ -9,7 +9,6 @@ import (
 	"log"
 	"mime/multipart"
 	"net/http"
-	"net/url"
 	"sync"
 	"time"
 )
@@ -103,13 +102,7 @@ func (c *ConversationStatsApi) FileUploadHandler(w http.ResponseWriter, r *http.
 	}
 	c.mu.Unlock()
 
-	// Send the user from whence they came (with the id that they need).
-	values := url.Values{}
-	values.Set("id", id)
-	viewUrlParsed, _ := url.Parse("/view.html")
-	viewUrlParsed.RawQuery = values.Encode()
-
-	http.Redirect(w, r, viewUrlParsed.String(), 302)
+	http.Redirect(w, r, "/stats?id="+id, 302)
 }
 
 // ConversationStatsHandler is a HTTP handler that takes an ID (param in a url) and returns the respective data from `c`.
