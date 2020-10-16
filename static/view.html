@@ -10,13 +10,17 @@
         <link rel="stylesheet" href="css/vendor/water.light.min.css" type="text/css"/>
         <link rel="stylesheet" href="css/main.css" type="text/css"/>
 
-        <script src="js/index.js" defer></script>
+        <script src="js/vendor/highcharts.js"></script>
+        <script src="js/vendor/highcharts-more.js"></script>
+        <script src="js/view.js" defer></script>
     </head>
     <body>
         <h1>Messenger Stats</h1>
-        <form enctype="multipart/form-data" action="/upload" method="post">
-            <input type="file" name="messenger_files" multiple/>
-            <input type="submit" value="Get Stats" />
-        </form>
+        <h2 id="title"></h2>
+        <div class="chart full-with-chart" id="messages-per-month-chart"></div>
+        <div class="half-width-chart-container">
+            <div class="chart half-width-chart" id="messages-per-user-chart"></div>
+            <div class="chart half-width-chart" id="messages-per-weekday-chart"></div>
+        </div>
     </body>
 </html>

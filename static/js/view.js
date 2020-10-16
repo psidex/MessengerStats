@@ -12,6 +12,7 @@ function createMessagesPerMonthChart(jsonData) {
     }
 
     Highcharts.chart('messages-per-month-chart', {
+        credits: { enabled: false },
         chart: { type: 'line' },
         title: { text: 'Messages Per Month' },
         xAxis: { categories },
@@ -36,6 +37,7 @@ function createMessagesPerUserChart(jsonData) {
     }
 
     Highcharts.chart('messages-per-user-chart', {
+        credits: { enabled: false },
         chart: { type: 'pie' },
         title: { text: 'Messages Per User' },
         series: [{ name: 'Messages Sent', data }],
@@ -51,11 +53,13 @@ function createMessagesPerWeekdayChart(jsonData) {
     });
 
     Highcharts.chart('messages-per-weekday-chart', {
+        credits: { enabled: false },
         chart: { polar: true, type: 'line' },
         title: { text: 'Messages Per Weekday' },
         xAxis: { categories },
         yAxis: { min: 0 },
         series: [{ name: 'Messages Sent', data }],
+        legend: { enabled: false },
         plotOptions: {
             series: { lineWidth: 3 },
             line: { color: messengerColour, marker: { enabled: false } },
