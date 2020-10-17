@@ -5,15 +5,21 @@ import (
 	"time"
 )
 
+// MessagesPerWeekdayJsObject is for putting the data in the structure that Highcharts requires.
+type MessagesPerWeekdayJsObject struct {
+	Data       []int    `json:"data"`
+	Categories []string `json:"categories"`
+}
+
 // MessagesPerWeekdayCounter is for counting how many messages are sent per weekday.
 type MessagesPerWeekdayCounter struct {
-	MessagesPerDay map[string]int
+	messagesPerDay map[string]int
 }
 
 // NewMessagesPerWeekdayCounter creates a new MessagesPerWeekdayCounter.
 func NewMessagesPerWeekdayCounter() MessagesPerWeekdayCounter {
 	m := MessagesPerWeekdayCounter{}
-	m.MessagesPerDay = make(map[string]int)
+	m.messagesPerDay = make(map[string]int)
 	return m
 }
 
@@ -22,9 +28,21 @@ func (m MessagesPerWeekdayCounter) Update(message messenger.Message) {
 	ts := message.TimestampMs / 1000
 	currentDay := time.Unix(ts, 0).Weekday().String()
 
-	if _, ok := m.MessagesPerDay[currentDay]; ok {
-		m.MessagesPerDay[currentDay]++
+	if _, ok := m.messagesPerDay[currentDay]; ok {
+		m.messagesPerDay[currentDay]++
 	} else {
-		m.MessagesPerDay[currentDay] = 1
+		m.messagesPerDay[currentDay] = 1
 	}
+}
+
+// GetJsObject returns the MessagesPerWeekdayJsObject for passing to Highcharts.
+func (m MessagesPerWeekdayCounter) GetJsObject() MessagesPerWeekdayJsObject {
+	obj := MessagesPerWeekdayJsObject{}
+	// Make sure we create ordered arrays.
+	orderedDays := []string{"Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"}
+	for _, weekday := range orderedDays {
+		obj.Categories = append(obj.Categories, weekday)
+		obj.Data = append(obj.Data, m.messagesPerDay[weekday])
+	}
+	return obj
 }

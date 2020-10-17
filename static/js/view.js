@@ -1,23 +1,13 @@
 const messengerColour = 'rgb(0,198,255)';
 
 function createMessagesPerMonthChart(jsonData) {
-    const data = [];
-    const categories = [];
-
-    for (const year in jsonData.messages_per_month) {
-        for (const month in jsonData.messages_per_month[year]) {
-            categories.push(`${year}-${month}`);
-            data.push(jsonData.messages_per_month[year][month]);
-        }
-    }
-
     Highcharts.chart('messages-per-month-chart', {
         credits: { enabled: false },
         chart: { type: 'line' },
         title: { text: 'Messages Per Month' },
-        xAxis: { categories },
+        xAxis: { categories: jsonData.messages_per_month.categories },
         yAxis: { title: { text: 'Messages Sent' } },
-        series: [{ name: 'Messages Sent', data }],
+        series: [{ name: 'Messages Sent', data: jsonData.messages_per_month.data }],
         legend: { enabled: false },
         plotOptions: {
             series: { lineWidth: 3 },
@@ -27,42 +17,40 @@ function createMessagesPerMonthChart(jsonData) {
 }
 
 function createMessagesPerUserChart(jsonData) {
-    const data = [];
-
-    for (const user in jsonData.messages_per_user) {
-        data.push({
-            name: user,
-            y: jsonData.messages_per_user[user],
-        });
-    }
-
     Highcharts.chart('messages-per-user-chart', {
         credits: { enabled: false },
         chart: { type: 'pie' },
         title: { text: 'Messages Per User' },
-        series: [{ name: 'Messages Sent', data }],
+        series: [{ name: 'Messages Sent', data: jsonData.messages_per_user }],
     });
 }
 
 function createMessagesPerWeekdayChart(jsonData) {
-    const data = [];
-    const categories = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
-
-    categories.forEach((weekday) => {
-        data.push(jsonData.messages_per_weekday[weekday]);
-    });
-
     Highcharts.chart('messages-per-weekday-chart', {
         credits: { enabled: false },
         chart: { polar: true, type: 'line' },
         title: { text: 'Messages Per Weekday' },
-        xAxis: { categories },
+        xAxis: { categories: jsonData.messages_per_weekday.categories },
         yAxis: { min: 0 },
-        series: [{ name: 'Messages Sent', data }],
+        series: [{ name: 'Messages Sent', data: jsonData.messages_per_weekday.data }],
         legend: { enabled: false },
         plotOptions: {
             series: { lineWidth: 3 },
             line: { color: messengerColour, marker: { enabled: false } },
+        },
+    });
+}
+
+function createWordCloudChart(jsonData) {
+    Highcharts.chart('word-cloud-chart', {
+        credits: { enabled: false },
+        series: [{
+            type: 'wordcloud',
+            data: jsonData.word_count,
+            name: 'Occurrences',
+        }],
+        title: {
+            text: 'Wordcloud of Messages',
         },
     });
 }
@@ -91,4 +79,5 @@ window.addEventListener('load', async () => {
     createMessagesPerMonthChart(data);
     createMessagesPerUserChart(data);
     createMessagesPerWeekdayChart(data);
+    createWordCloudChart(data);
 });

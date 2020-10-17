@@ -4,6 +4,11 @@ import (
 	"github.com/psidex/MessengerStats/internal/messenger"
 )
 
+type MessagesPerUserJsObject struct {
+	Y    int    `json:"y"`
+	Name string `json:"name"`
+}
+
 // MessagesPerUserCounter is for counting how many messages are sent per user.
 // Pointers don't need to be used anywhere as the only field is a map which itself is a reference type.
 type MessagesPerUserCounter struct {
@@ -25,4 +30,15 @@ func (m MessagesPerUserCounter) Update(message messenger.Message) {
 	} else {
 		m.MessagesPerUser[currentUser] = 1
 	}
+}
+
+func (m MessagesPerUserCounter) GetJsObject() []MessagesPerUserJsObject {
+	var objects []MessagesPerUserJsObject
+	for user, count := range m.MessagesPerUser {
+		objects = append(objects, MessagesPerUserJsObject{
+			Name: user,
+			Y:    count,
+		})
+	}
+	return objects
 }

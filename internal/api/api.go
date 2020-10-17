@@ -15,10 +15,11 @@ import (
 
 // conversationStats holds all the statistics for an individual Messenger conversation.
 type conversationStats struct {
-	Title              string              `json:"conversation_title"`
-	MessagesPerMonth   map[int]map[int]int `json:"messages_per_month"`
-	MessagesPerUser    map[string]int      `json:"messages_per_user"`
-	MessagesPerWeekday map[string]int      `json:"messages_per_weekday"`
+	Title              string                           `json:"conversation_title"`
+	MessagesPerMonth   stats.MessagesPerMonthJsObject   `json:"messages_per_month"`
+	MessagesPerUser    []stats.MessagesPerUserJsObject  `json:"messages_per_user"`
+	MessagesPerWeekday stats.MessagesPerWeekdayJsObject `json:"messages_per_weekday"`
+	WordCount          []stats.WordCountJsObject        `json:"word_count"`
 }
 
 // ConversationStatsApi contains the data and functions for generating conversation statistics.
@@ -48,19 +49,20 @@ func (c *ConversationStatsApi) FileUploadHandler(w http.ResponseWriter, r *http.
 		return
 	}
 
-	mpuCounter := stats.NewMessagesPerUserCounter()
-	mpwdCounter := stats.NewMessagesPerWeekdayCounter()
-	mpmCounter := stats.NewMessagesPerMonthCounter()
-
-	title := ""
-	id := ksuid.New().String()
-	startTime := time.Now()
-
 	headers, ok := r.MultipartForm.File["messenger_files"]
 	if !ok {
 		http.Error(w, "invalid request, could not find messenger_files in form", http.StatusInternalServerError)
 		return
 	}
+
+	mpuCounter := stats.NewMessagesPerUserCounter()
+	mpwdCounter := stats.NewMessagesPerWeekdayCounter()
+	mpmCounter := stats.NewMessagesPerMonthCounter()
+	wCounter := stats.NewWordCounter()
+
+	title := ""
+	id := ksuid.New().String()
+	startTime := time.Now()
 
 	for _, header := range headers {
 		var (
@@ -86,21 +88,21 @@ func (c *ConversationStatsApi) FileUploadHandler(w http.ResponseWriter, r *http.
 			mpuCounter.Update(message)
 			mpwdCounter.Update(message)
 			mpmCounter.Update(message)
+			wCounter.Update(message)
 		}
 	}
-
-	mpmCounter.Finalize()
-
-	log.Printf("File parse and calculations took %s", time.Since(startTime))
 
 	c.mu.Lock()
 	c.savedStats[id] = &conversationStats{
 		title,
-		mpmCounter.MessagesPerYearMonth,
-		mpuCounter.MessagesPerUser,
-		mpwdCounter.MessagesPerDay,
+		mpmCounter.GetJsObject(),
+		mpuCounter.GetJsObject(),
+		mpwdCounter.GetJsObject(),
+		wCounter.GetJsObject(),
 	}
 	c.mu.Unlock()
+
+	log.Printf("File parse and calculations took %s", time.Since(startTime))
 
 	http.Redirect(w, r, "/stats?id="+id, 302)
 }
