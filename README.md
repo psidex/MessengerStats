@@ -21,5 +21,4 @@ calculations currently take ~2ms per MB).
 ## Credits
 
 - [water.css](https://watercss.kognise.dev/)
-- [chart.js](https://www.chartjs.org/)
-- [chartjs-plugin-labels](https://github.com/emn178/chartjs-plugin-labels)
+- [Highcharts](https://www.highcharts.com/)

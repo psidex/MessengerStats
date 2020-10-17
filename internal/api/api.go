@@ -13,8 +13,8 @@ import (
 	"time"
 )
 
-// conversationStats holds all the statistics for an individual Messenger conversation.
-type conversationStats struct {
+// apiResponse holds all the data for a conversation.
+type apiResponse struct {
 	Title              string                           `json:"conversation_title"`
 	MessagesPerMonth   stats.MessagesPerMonthJsObject   `json:"messages_per_month"`
 	MessagesPerUser    []stats.MessagesPerUserJsObject  `json:"messages_per_user"`
@@ -23,14 +23,14 @@ type conversationStats struct {
 
 // ConversationStatsApi contains the data and functions for generating conversation statistics.
 type ConversationStatsApi struct {
-	savedStats map[string]*conversationStats // Map of generated id : struct pointer
-	mu         *sync.Mutex                   // Controls access to savedStats
+	apiResponseCache map[string]*apiResponse // unique id : cache
+	mu               *sync.Mutex             // Controls access to apiResponseCache
 }
 
 func NewConversationStatsApi() *ConversationStatsApi {
 	c := &ConversationStatsApi{}
 	c.mu = &sync.Mutex{}
-	c.savedStats = make(map[string]*conversationStats)
+	c.apiResponseCache = make(map[string]*apiResponse)
 	return c
 }
 
@@ -90,7 +90,7 @@ func (c *ConversationStatsApi) FileUploadHandler(w http.ResponseWriter, r *http.
 	}
 
 	c.mu.Lock()
-	c.savedStats[id] = &conversationStats{
+	c.apiResponseCache[id] = &apiResponse{
 		title,
 		mpmCounter.GetJsObject(),
 		mpuCounter.GetJsObject(),
@@ -117,7 +117,7 @@ func (c *ConversationStatsApi) ConversationStatsHandler(w http.ResponseWriter, r
 	log.Println("Stats for ID requested:", id)
 
 	c.mu.Lock()
-	savedStats, ok := c.savedStats[id]
+	savedStats, ok := c.apiResponseCache[id]
 	c.mu.Unlock()
 
 	if !ok {
