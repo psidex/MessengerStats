@@ -41,20 +41,6 @@ function createMessagesPerWeekdayChart(jsonData) {
     });
 }
 
-function createWordCloudChart(jsonData) {
-    Highcharts.chart('word-cloud-chart', {
-        credits: { enabled: false },
-        series: [{
-            type: 'wordcloud',
-            data: jsonData.word_count,
-            name: 'Occurrences',
-        }],
-        title: {
-            text: 'Wordcloud of Messages',
-        },
-    });
-}
-
 function setTitle(titleText) {
     document.getElementById('title').textContent = `${titleText}`;
 }
@@ -79,5 +65,4 @@ window.addEventListener('load', async () => {
     createMessagesPerMonthChart(data);
     createMessagesPerUserChart(data);
     createMessagesPerWeekdayChart(data);
-    createWordCloudChart(data);
 });

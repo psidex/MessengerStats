@@ -40,8 +40,6 @@ func easyjson74542c9fDecodeGithubComPsidexMessengerStatsInternalMessenger(in *jl
 			out.SenderName = string(in.String())
 		case "timestamp_ms":
 			out.TimestampMs = int64(in.Int64())
-		case "content":
-			out.Content = string(in.String())
 		default:
 			in.SkipRecursive()
 		}
@@ -65,11 +63,6 @@ func easyjson74542c9fEncodeGithubComPsidexMessengerStatsInternalMessenger(out *j
 		const prefix string = ",\"timestamp_ms\":"
 		out.RawString(prefix)
 		out.Int64(int64(in.TimestampMs))
-	}
-	if in.Content != "" {
-		const prefix string = ",\"content\":"
-		out.RawString(prefix)
-		out.String(string(in.Content))
 	}
 	out.RawByte('}')
 }
@@ -124,7 +117,7 @@ func easyjson74542c9fDecodeGithubComPsidexMessengerStatsInternalMessenger1(in *j
 				in.Delim('[')
 				if out.Messages == nil {
 					if !in.IsDelim(']') {
-						out.Messages = make([]Message, 0, 1)
+						out.Messages = make([]Message, 0, 2)
 					} else {
 						out.Messages = []Message{}
 					}

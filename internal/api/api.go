@@ -19,7 +19,6 @@ type conversationStats struct {
 	MessagesPerMonth   stats.MessagesPerMonthJsObject   `json:"messages_per_month"`
 	MessagesPerUser    []stats.MessagesPerUserJsObject  `json:"messages_per_user"`
 	MessagesPerWeekday stats.MessagesPerWeekdayJsObject `json:"messages_per_weekday"`
-	WordCount          []stats.WordCountJsObject        `json:"word_count"`
 }
 
 // ConversationStatsApi contains the data and functions for generating conversation statistics.
@@ -58,7 +57,6 @@ func (c *ConversationStatsApi) FileUploadHandler(w http.ResponseWriter, r *http.
 	mpuCounter := stats.NewMessagesPerUserCounter()
 	mpwdCounter := stats.NewMessagesPerWeekdayCounter()
 	mpmCounter := stats.NewMessagesPerMonthCounter()
-	wCounter := stats.NewWordCounter()
 
 	title := ""
 	id := ksuid.New().String()
@@ -88,7 +86,6 @@ func (c *ConversationStatsApi) FileUploadHandler(w http.ResponseWriter, r *http.
 			mpuCounter.Update(message)
 			mpwdCounter.Update(message)
 			mpmCounter.Update(message)
-			wCounter.Update(message)
 		}
 	}
 
@@ -98,7 +95,6 @@ func (c *ConversationStatsApi) FileUploadHandler(w http.ResponseWriter, r *http.
 		mpmCounter.GetJsObject(),
 		mpuCounter.GetJsObject(),
 		mpwdCounter.GetJsObject(),
-		wCounter.GetJsObject(),
 	}
 	c.mu.Unlock()
 

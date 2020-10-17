@@ -12,7 +12,7 @@ import (
 type Message struct {
 	SenderName  string `json:"sender_name"`
 	TimestampMs int64  `json:"timestamp_ms"`
-	Content     string `json:"content,omitempty"`
+	//Content     string `json:"content,omitempty"`
 	//Type        string `json:"type"`
 	//Photos      []struct {
 	//	URI               string `json:"uri"`
