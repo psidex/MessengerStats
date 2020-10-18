@@ -13,9 +13,6 @@
     - Check the timings aren't drastically different on hetzner server comapred to pc
 - [ ] Binary should have flag or option that allows you to set request rate for api requests
 - [ ] Binary should also have flag/options that allow diff features like caching data
-- [ ] Dockerize
-- [ ] Github actions
-- [ ] Readme badges
 - [ ] Have a demo page that shows randomly generated fake data
     - Maybe it just loops a set of pre-made conversations instead of full generation
 
@@ -26,6 +23,9 @@
 - [x] Switch from form to upload and stats api requests
 - [x] Don't store data in memory unless requested
 - [x] Upload should have options such as "cache for x amount of time
+- [x] Dockerize
+- [x] Github actions
+- [x] Readme badges
 
 ### New JSON API
 
