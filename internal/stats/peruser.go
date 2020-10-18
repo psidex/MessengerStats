@@ -4,6 +4,7 @@ import (
 	"github.com/psidex/MessengerStats/internal/messenger"
 )
 
+// MessagesPerUserJsObject is for putting the data in the structure that Highcharts requires.
 type MessagesPerUserJsObject struct {
 	Y    int    `json:"y"`
 	Name string `json:"name"`
@@ -32,6 +33,7 @@ func (m MessagesPerUserCounter) Update(message messenger.Message) {
 	}
 }
 
+// GetJsObject returns the MessagesPerUserJsObject for passing to Highcharts.
 func (m MessagesPerUserCounter) GetJsObject() []MessagesPerUserJsObject {
 	var objects []MessagesPerUserJsObject
 	for user, count := range m.MessagesPerUser {

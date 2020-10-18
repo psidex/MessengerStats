@@ -92,7 +92,7 @@ func (m MessagesPerMonthCounter) GetJsObject() MessagesPerMonthJsObject {
 // sortedMapKeys takes a map and returns the sorted keys.
 func sortedMapKeys(mapping map[int]int) []int {
 	var keys []int
-	for k, _ := range mapping {
+	for k := range mapping {
 		keys = append(keys, k)
 	}
 	sort.Ints(keys)

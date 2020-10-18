@@ -1,0 +1,12 @@
+node_modules
+.idea
+.github
+.git
+/static
+
+*.zip
+*.log
+*.png
+*.md
+.eslintrc.json
+config.json

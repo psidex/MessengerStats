@@ -33,6 +33,7 @@ type StatsApi struct {
 	mu               *sync.Mutex // Controls access to apiResponseCache
 }
 
+// NewStatsApi creates a new StatsApi.
 func NewStatsApi() StatsApi {
 	c := StatsApi{}
 	c.mu = &sync.Mutex{}

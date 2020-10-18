@@ -7,7 +7,7 @@ import (
 	"net/http"
 )
 
-func SendView(htmlFile string) func(w http.ResponseWriter, r *http.Request) {
+func sendView(htmlFile string) func(w http.ResponseWriter, r *http.Request) {
 	// TODO: Doing it this way means the file is opened and read on every request, find way to load into mem.
 	return func(w http.ResponseWriter, r *http.Request) {
 		http.ServeFile(w, r, "./views/"+htmlFile+".html")
@@ -19,8 +19,8 @@ func main() {
 
 	r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("./static"))))
 
-	r.HandleFunc("/", SendView("index"))
-	r.HandleFunc("/stats", SendView("stats"))
+	r.HandleFunc("/", sendView("index"))
+	r.HandleFunc("/stats", sendView("stats"))
 
 	statsApi := api.NewStatsApi()
 	r.HandleFunc("/api/stats", statsApi.StatsHandler).Methods("GET")
