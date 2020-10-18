@@ -1,6 +1,9 @@
 FROM golang:latest AS builder
 WORKDIR /msbuild
-COPY . .
+COPY cmd .
+COPY internal .
+COPY go.mod .
+COPY go.sum .
 RUN CGO_ENABLED=0 GOOS=linux go build -o ./msserver ./cmd/server/main.go
 
 FROM alpine:latest
