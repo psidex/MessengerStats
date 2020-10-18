@@ -56,8 +56,8 @@ window.addEventListener('load', async () => {
     const rawData = await fetch(`/api/stats?id=${id}`);
     const data = await rawData.json();
 
-    if (data.error === 'ID not found') {
-        alert('ID not found');
+    if (data.error !== '') {
+        alert(`Error: ${data.error}`);
         return;
     }
 

@@ -2,55 +2,62 @@ package api
 
 import (
 	"encoding/json"
-	"fmt"
 	"github.com/psidex/MessengerStats/internal/messenger"
 	"github.com/psidex/MessengerStats/internal/stats"
 	"github.com/segmentio/ksuid"
 	"log"
-	"mime/multipart"
 	"net/http"
 	"sync"
 	"time"
 )
 
-// apiResponse holds all the data for a conversation.
-type apiResponse struct {
+// statsApiResponse holds all the data to be returned by the /stats endpoint.
+type statsApiResponse struct {
+	singleUse          bool                             // If true, erase from cache after request.
+	Error              string                           `json:"error"`
 	Title              string                           `json:"conversation_title"`
 	MessagesPerMonth   stats.MessagesPerMonthJsObject   `json:"messages_per_month"`
 	MessagesPerUser    []stats.MessagesPerUserJsObject  `json:"messages_per_user"`
 	MessagesPerWeekday stats.MessagesPerWeekdayJsObject `json:"messages_per_weekday"`
 }
 
-// ConversationStatsApi contains the data and functions for generating conversation statistics.
-type ConversationStatsApi struct {
-	apiResponseCache map[string]*apiResponse // unique id : cache
-	mu               *sync.Mutex             // Controls access to apiResponseCache
+// uploadApiResponse holds all the data to be returned by the /upload endpoint.
+type uploadApiResponse struct {
+	Error string `json:"error"`
+	Id    string `json:"id"`
 }
 
-func NewConversationStatsApi() *ConversationStatsApi {
-	c := &ConversationStatsApi{}
+// StatsApi contains the data and functions for generating conversation statistics.
+type StatsApi struct {
+	apiResponseCache map[string]statsApiResponse
+	mu               *sync.Mutex // Controls access to apiResponseCache
+}
+
+func NewStatsApi() StatsApi {
+	c := StatsApi{}
 	c.mu = &sync.Mutex{}
-	c.apiResponseCache = make(map[string]*apiResponse)
+	c.apiResponseCache = make(map[string]statsApiResponse)
 	return c
 }
 
-// FileUploadHandler is a HTTP handler that takes a Messenger JSON file, parses it, and saves the stats in memory.
-// Expects a POST request.
-func (c *ConversationStatsApi) FileUploadHandler(w http.ResponseWriter, r *http.Request) {
-	if r.Method != "POST" {
-		http.Error(w, "must send a POST request to this endpoint", http.StatusBadRequest)
-		return
-	}
+// UploadHandler is a HTTP handler for the /api/upload endpoint.
+func (s StatsApi) UploadHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	responseEncoder := json.NewEncoder(w)
 
 	const _500MB = 1024 * 1024 * 500 // Use up to 500MB of RAM, rest goes on disk.
 	if err := r.ParseMultipartForm(_500MB); nil != err {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		_ = responseEncoder.Encode(uploadApiResponse{
+			Error: err.Error(),
+		})
 		return
 	}
 
 	headers, ok := r.MultipartForm.File["messenger_files"]
 	if !ok {
-		http.Error(w, "invalid request, could not find messenger_files in form", http.StatusInternalServerError)
+		_ = responseEncoder.Encode(uploadApiResponse{
+			Error: "could not find messenger_files in form",
+		})
 		return
 	}
 
@@ -63,20 +70,21 @@ func (c *ConversationStatsApi) FileUploadHandler(w http.ResponseWriter, r *http.
 	startTime := time.Now()
 
 	for _, header := range headers {
-		var (
-			file multipart.File
-			err  error
-		)
+		file, err := header.Open()
 
-		if file, err = header.Open(); err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+		if err != nil {
+			_ = responseEncoder.Encode(uploadApiResponse{
+				Error: err.Error(),
+			})
 			return
 		}
 
 		conversation, err := messenger.NewConversation(file)
 		_ = file.Close()
 		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+			_ = responseEncoder.Encode(uploadApiResponse{
+				Error: err.Error(),
+			})
 			return
 		}
 
@@ -89,46 +97,59 @@ func (c *ConversationStatsApi) FileUploadHandler(w http.ResponseWriter, r *http.
 		}
 	}
 
-	c.mu.Lock()
-	c.apiResponseCache[id] = &apiResponse{
-		title,
-		mpmCounter.GetJsObject(),
-		mpuCounter.GetJsObject(),
-		mpwdCounter.GetJsObject(),
+	cacheParam := r.URL.Query().Get("cache")
+	singleUse := true
+	if cacheParam == "true" {
+		singleUse = false
 	}
-	c.mu.Unlock()
+
+	s.mu.Lock()
+	s.apiResponseCache[id] = statsApiResponse{
+		singleUse:          singleUse,
+		Error:              "",
+		Title:              title,
+		MessagesPerMonth:   mpmCounter.GetJsObject(),
+		MessagesPerUser:    mpuCounter.GetJsObject(),
+		MessagesPerWeekday: mpwdCounter.GetJsObject(),
+	}
+	s.mu.Unlock()
 
 	log.Printf("File parse and calculations took %s", time.Since(startTime))
 
-	http.Redirect(w, r, "/stats?id="+id, 302)
+	_ = responseEncoder.Encode(uploadApiResponse{
+		Error: "",
+		Id:    id,
+	})
 }
 
-// ConversationStatsHandler is a HTTP handler that takes an ID (param in a url) and returns the respective data from `c`.
-func (c *ConversationStatsApi) ConversationStatsHandler(w http.ResponseWriter, r *http.Request) {
-	idQuery, ok := r.URL.Query()["id"]
-	if !ok {
-		http.NotFound(w, r)
+// StatsHandler is a HTTP handler that takes an ID (param in a url) and returns the respective data from `c`.
+func (s StatsApi) StatsHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	responseEncoder := json.NewEncoder(w)
+
+	id := r.URL.Query().Get("id")
+	if id == "" {
+		_ = responseEncoder.Encode(statsApiResponse{
+			Error: "no \"id\" parameter present in request",
+		})
 		return
 	}
 
-	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-
-	id := idQuery[0]
 	log.Println("Stats for ID requested:", id)
 
-	c.mu.Lock()
-	savedStats, ok := c.apiResponseCache[id]
-	c.mu.Unlock()
+	s.mu.Lock()
+	savedStats, ok := s.apiResponseCache[id]
+	if ok && savedStats.singleUse {
+		delete(s.apiResponseCache, id)
+	}
+	s.mu.Unlock()
 
 	if !ok {
-		w.WriteHeader(http.StatusNotFound)
-		_, _ = fmt.Fprint(w, "{\"error\": \"ID not found\"}")
+		_ = responseEncoder.Encode(statsApiResponse{
+			Error: "invalid ID",
+		})
 		return
 	}
 
-	w.WriteHeader(http.StatusOK)
-	err := json.NewEncoder(w).Encode(savedStats)
-	if err != nil {
-		log.Println("ConversationStatsHandler JSON Encode error:", err)
-	}
+	_ = responseEncoder.Encode(savedStats)
 }
