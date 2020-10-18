@@ -50,6 +50,7 @@ window.addEventListener('load', async () => {
     const id = currentUrl.searchParams.get('id');
 
     if (id === null) {
+        setTitle('Error: no id supplied');
         return;
     }
 
@@ -57,7 +58,7 @@ window.addEventListener('load', async () => {
     const data = await rawData.json();
 
     if (data.error !== '') {
-        alert(`Error: ${data.error}`);
+        setTitle(`Error: ${data.error}`);
         return;
     }
 

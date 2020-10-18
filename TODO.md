@@ -7,7 +7,6 @@
 - [ ] Any server-side errors should be prettily shown to the client instead of just server logging / alert()ing
 - [ ] Home page should have upload/stat options, gh link, creits, and instructions
 - [ ] View page should be suitable for printing to pdf or whatever
-- [ ] Upload should have options such as "cache for x amount of time and allow you to choose what stats to calculate
 - [ ] If caching on upload, provide unique link, but make it clear that anyone can access data if they have link, e.g. /view?id=xyz
 - [ ] Make every stat optional, have grid or something on upload page wth tickboxes for each
 - [ ] Display "this stat takes ~Xms per 1000 messages" so users know how long wait will be
@@ -18,7 +17,7 @@
 - [ ] Github actions
 - [ ] Readme badges
 - [ ] Have a demo page that shows randomly generated fake data
-    - maybe it just loops a set of pre-made conversations instead of full generation
+    - Maybe it just loops a set of pre-made conversations instead of full generation
 
 ## Done List
 
@@ -26,8 +25,11 @@
 - [x] Home page should be the "upload" page
 - [x] Switch from form to upload and stats api requests
 - [x] Don't store data in memory unless requested
+- [x] Upload should have options such as "cache for x amount of time
 
 ### New JSON API
+
+- Error messages should be user-friendly if possible
 
 #### POST `/api/upload?cache=true` 
 

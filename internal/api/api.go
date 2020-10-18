@@ -56,7 +56,7 @@ func (s StatsApi) UploadHandler(w http.ResponseWriter, r *http.Request) {
 	headers, ok := r.MultipartForm.File["messenger_files"]
 	if !ok {
 		_ = responseEncoder.Encode(uploadApiResponse{
-			Error: "could not find messenger_files in form",
+			Error: "no files supplied",
 		})
 		return
 	}
@@ -71,7 +71,6 @@ func (s StatsApi) UploadHandler(w http.ResponseWriter, r *http.Request) {
 
 	for _, header := range headers {
 		file, err := header.Open()
-
 		if err != nil {
 			_ = responseEncoder.Encode(uploadApiResponse{
 				Error: err.Error(),
@@ -83,7 +82,7 @@ func (s StatsApi) UploadHandler(w http.ResponseWriter, r *http.Request) {
 		_ = file.Close()
 		if err != nil {
 			_ = responseEncoder.Encode(uploadApiResponse{
-				Error: err.Error(),
+				Error: "failed to parse, are you sure it's the correct file?",
 			})
 			return
 		}

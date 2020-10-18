@@ -20,5 +20,7 @@ calculations currently take ~2ms per MB).
 
 ## Credits
 
-- [water.css](https://watercss.kognise.dev/)
-- [Highcharts](https://www.highcharts.com/)
+- Main website CSS: [water.css](https://watercss.kognise.dev/)
+- Charting library: [Highcharts](https://www.highcharts.com/)
+- Nice error notifications: [notyf](https://github.com/caroso1222/notyf)
+- Favicon icon: [Feather Icons](https://feathericons.com/)

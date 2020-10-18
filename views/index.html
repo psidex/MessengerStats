@@ -7,9 +7,13 @@
         <meta name="description" content="View statistics about your Messenger conversations">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <link rel="stylesheet" href="/static/css/vendor/water.light.min.css" type="text/css"/>
-        <link rel="stylesheet" href="/static/css/main.css" type="text/css"/>
+        <link rel="icon" type="image/png" href="/static/favicon.ico"/>
 
+        <link rel="stylesheet" href="/static/css/vendor/water.light.min.css" type="text/css"/>
+        <link rel="stylesheet" href="/static/css/vendor/notyf.min.css" type="text/css"/>
+        <link rel="stylesheet" href="/static/css/index.css" type="text/css"/>
+
+        <script src="/static/js/vendor/notyf.min.js"></script>
         <script src="/static/js/index.js" defer></script>
     </head>
     <body>
@@ -17,6 +21,35 @@
         <form enctype="multipart/form-data" action="/upload" method="post">
             <input id="messenger-file-input" type="file" name="messenger_files" multiple/>
         </form>
-        <input id="get-stats-btn" value="Get Stats" />
+        <input type="checkbox" id="cache-stats-checkbox" name="cache-stats-checkbox">
+        <label for="cache-stats-checkbox">Temporarily store stats</label><br>
+        <button type="button" id="get-stats-btn">Get Stats</button>
+
+        <h2 id="how-to-get-your-data">How to get your Messenger data</h2>
+        <ol>
+            <li>Go to your Facebook settings (web version) -&gt; Your Facebook information -&gt; Download your information</li>
+            <li>Select &quot;All of my data&quot; for the date range, &quot;JSON&quot; for the format, and &quot;Low&quot; for media quality (this will make the download as small as possible)</li>
+            <li>Press &quot;Deselect all&quot;</li>
+            <li>Find and tick the box for downloading &quot;Messages&quot;</li>
+            <li>Click &quot;Create File&quot;</li>
+            <li>Wait (this could take hours) and then download your file (Facebook should email you with a link when it&#39;s ready)</li>
+            <li>Open the zip and go to messages -&gt; inbox -&gt; the name of the conversation you want</li>
+            <li>You should now see a few directories (ignore them) and either 1 or a few &quot;message_x.json&quot; files, extract these .json files and use them in the section below</li>
+        </ol>
+        <h2 id="using-this-website">Using this website</h2>
+        <ol>
+            <li>Click on &quot;Browse&quot; and select <strong>all</strong> of the &quot;message_x.json&quot; files from conversation directory (where &quot;x&quot; should be a incrementing number)</li>
+            <li>Tick the &quot;Temporarily store stats&quot; box if you want the site to save your data for a short time so you can share it
+                (If you don&#39;t tick this, the site won&#39;t save your data, but as soon as you leave the page the link won&#39;t work again)</li>
+            <li>Click &quot;Get Stats&quot;</li>
+        </ol>
+        <h2 id="credits">Credits</h2>
+        <ul>
+            <li>Main website CSS: <a href="https://watercss.kognise.dev/">water.css</a></li>
+            <li>Charting library: <a href="https://www.highcharts.com/">Highcharts</a></li>
+            <li>Nice error notifications: <a href="https://github.com/caroso1222/notyf">notyf</a></li>
+            <li>Favicon icon: <a href="https://feathericons.com/">Feather Icons</a></li>
+        </ul>
+
     </body>
 </html>
