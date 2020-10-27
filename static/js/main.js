@@ -59,7 +59,7 @@ function createCharts(jsonData) {
 }
 
 function uploadFiles() {
-    const ws = new WebSocket('ws://127.0.0.1:8080/api/ws');
+    const ws = new WebSocket('ws:///api/ws');
 
     ws.onopen = async () => {
         const fileCountByte = new Uint8Array(1);
