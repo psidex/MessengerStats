@@ -21,5 +21,5 @@ func main() {
 	r.HandleFunc("/api/ws", handlers.WebSocketApi).Methods("GET")
 
 	log.Print("Serving at http://127.0.0.1:8080")
-	log.Fatal(http.ListenAndServe("127.0.0.1:8080", r))
+	log.Fatal(http.ListenAndServe(":8080", r))
 }
