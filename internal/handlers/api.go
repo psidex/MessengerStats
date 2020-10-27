@@ -53,7 +53,10 @@ func WebSocketApi(w http.ResponseWriter, r *http.Request) {
 
 	// Receive each file.
 	for i := 0; i < fileCount; i++ {
+		fileReadTimeStart := time.Now()
 		t, fileBytes, _ := ws.ReadMessage()
+		log.Printf("File read %d took %s\n", i, time.Since(fileReadTimeStart))
+
 		if t != websocket.BinaryMessage {
 			js, _ := json.Marshal(apiResponse{Error: "files should be sent as binary data"})
 			_ = ws.WriteMessage(websocket.BinaryMessage, js)

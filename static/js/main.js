@@ -64,15 +64,19 @@ function createCharts(jsonData) {
 function uploadFiles() {
     const ws = new WebSocket(webSocketUrl);
 
-    ws.onopen = async () => {
+    ws.onopen = () => {
         const fileCountByte = new Uint8Array(1);
         fileCountByte[0] = fileInput.files.length;
         ws.send(fileCountByte);
 
+        // Send off all the files asap.
         for (let i = 0; i < fileInput.files.length; i++) {
+            console.time(`read file ${i} into memory`);
             const file = fileInput.files[i];
-            const data = await file.arrayBuffer();
-            ws.send(data);
+            file.arrayBuffer().then((data) => {
+                console.timeEnd(`read file ${i} into memory`);
+                ws.send(data);
+            });
         }
     };
 
