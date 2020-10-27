@@ -12,9 +12,10 @@
   },
   "rules": {
     "indent": ["error", 4],
-    "no-restricted-syntax": "off",
-    "import/extensions": "off",
-    "no-new": "off"
+    "no-new": "off",
+    "no-restricted-globals": "off",
+    "no-plusplus": "off",
+    "no-await-in-loop": "off"
   },
   "globals": {
     "Highcharts": true

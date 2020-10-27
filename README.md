@@ -7,25 +7,25 @@
 
 View statistics about your Messenger conversations
 
-## Example
+## Usage
+
+You can visit the site at TODO, or you can download the binary and run it yourself.
+
+If you download it yourself, the app won't make any connection to the internet, it works completely offline.
+
+If you use the hosted site, secure protocols are used for data transfer (https and wss). 
+
+Neither version of the app stores any of your data, it is processed and then deleted.
+
+## Demo
 
 (Names censored)
 
-![example](example.png)
-
-## Architecture
-
-The app is a basic http web server but, for obvious reasons, isn't hosted on the internet. To use it, download and run
-one of the pre-built binaries (or build it yourself) and then go to the URL it gives you.
-
-It uses basic HTML forms for data transfer, and the calculations for even lots of files shouldn't take very long; on my
-machine it takes ~200ms to upload, parse, and calculate statistics for a 20.8 MB conversation split over 11 files
-(Almost all of that time is from the calls to `ParseMultipartForm` and `UnmarshalJSON`, the actual statistics
-calculations currently take ~2ms per MB).
+![demonstration image](demo.png)
 
 ## Credits
 
 - Main website CSS: [water.css](https://watercss.kognise.dev/)
 - Charting library: [Highcharts](https://www.highcharts.com/)
-- Nice error notifications: [notyf](https://github.com/caroso1222/notyf)
-- Favicon icon: [Feather Icons](https://feathericons.com/)
+- Icons: [Feather Icons](https://feathericons.com/)
+- Corner Icon: [tholman/github-corners](https://github.com/tholman/github-corners)

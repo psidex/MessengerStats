@@ -42,7 +42,13 @@ func (m MessagesPerWeekdayCounter) GetJsObject() MessagesPerWeekdayJsObject {
 	orderedDays := []string{"Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"}
 	for _, weekday := range orderedDays {
 		obj.Categories = append(obj.Categories, weekday)
-		obj.Data = append(obj.Data, m.messagesPerDay[weekday])
+
+		if messageCount, ok := m.messagesPerDay[weekday]; ok {
+			obj.Data = append(obj.Data, messageCount)
+		} else {
+			obj.Data = append(obj.Data, 0)
+		}
+
 	}
 	return obj
 }

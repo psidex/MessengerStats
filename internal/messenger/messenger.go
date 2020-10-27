@@ -1,10 +1,5 @@
 package messenger
 
-import (
-	"io"
-	"io/ioutil"
-)
-
 // These structs (courtesy of https://mholt.github.io/json-to-go/) are to be unmarshalled into using easyjson.
 // If a field is required that is commented, uncomment it and re-run easyjson: "easyjson -all ./messenger.go".
 
@@ -60,16 +55,11 @@ type Conversation struct {
 	//ThreadPath         string    `json:"thread_path"`
 }
 
-// NewConversation attempts to unmarshal the data from the io.Reader into a new Conversation struct.
-func NewConversation(reader io.Reader) (*Conversation, error) {
+// NewConversation attempts to unmarshal the data from the byte slice into a new Conversation struct.
+func NewConversation(data []byte) (*Conversation, error) {
 	conv := &Conversation{}
-	bytes, err := ioutil.ReadAll(reader)
-	if err != nil {
-		return &Conversation{}, err
-	}
-	err = conv.UnmarshalJSON(bytes)
-	if err != nil {
-		return &Conversation{}, err
+	if err := conv.UnmarshalJSON(data); err != nil {
+		return conv, err
 	}
 	return conv, nil
 }

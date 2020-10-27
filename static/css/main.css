@@ -1,0 +1,31 @@
+/* Everyone knows using important is good practice */
+h1, h2, ol, ul, input, button {
+    margin: 0 !important;
+}
+input, button, h2 {
+    margin-top: 0.5em !important;
+}
+h1, h2 {
+    margin-bottom: 0.25em !important;
+}
+body {
+    margin-bottom: 0 !important;
+}
+
+.charts {
+    visibility: hidden;
+}
+
+.chart {
+    margin-top: 1em;
+}
+.full-width-chart {
+    width: 100%;
+}
+.half-width-chart-container {
+    display: flex;
+    width: 100%;
+}
+.half-width-chart {
+    width: 50%;
+}

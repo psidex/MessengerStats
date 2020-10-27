@@ -44,6 +44,10 @@ func (m MessagesPerMonthCounter) Update(message messenger.Message) {
 
 // GetJsObject returns the MessagesPerMonthJsObject for passing to Highcharts.
 func (m MessagesPerMonthCounter) GetJsObject() MessagesPerMonthJsObject {
+	if len(m.messagesPerYearMonth) <= 0 {
+		return MessagesPerMonthJsObject{}
+	}
+
 	messagesPerYearMonthSortedKeys := make([]int, len(m.messagesPerYearMonth))
 	i := 0
 	for k := range m.messagesPerYearMonth {
