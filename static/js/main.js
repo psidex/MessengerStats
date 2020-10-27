@@ -4,7 +4,8 @@ const infoSection = document.getElementsByClassName('website-information')[0];
 const chartSection = document.getElementsByClassName('charts')[0];
 const conversationTitle = document.getElementById('conversation-title');
 
-const webSocketUrl = location.protocol === 'https:' ? 'wss:///api/ws' : 'ws:///api/ws';
+let webSocketUrl = window.location.protocol === 'https:' ? 'wss' : 'ws';
+webSocketUrl += `://${window.location.host}/api/ws`;
 
 function setTitle(titleText) {
     conversationTitle.textContent = `${titleText}`;
