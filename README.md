@@ -9,11 +9,11 @@ View statistics about your Messenger conversations
 
 ## Usage
 
-You can visit the site at TODO, or you can download the binary and run it yourself.
+You can visit the site at [messenger.simonj.tech](https://messenger.simonj.tech/), or you can download the binary and run it yourself.
 
 If you download it yourself, the app won't make any connection to the internet, it works completely offline.
 
-If you use the hosted site, secure protocols are used for data transfer (https and wss). 
+If you use the hosted site, secure protocols are used for data transfer (https and wss).
 
 Neither version of the app stores any of your data, it is processed and then deleted.
 
