@@ -21,6 +21,11 @@ type apiResponse struct {
 	MessagesPerWeekday stats.MessagesPerWeekdayJsObject `json:"messages_per_weekday"`
 }
 
+// progressResponse represents the progress of the upload.
+type progressResponse struct {
+	Progress int `json:"progress"`
+}
+
 // WebSocketApi is a handler for the api's websocket endpoint.
 func WebSocketApi(w http.ResponseWriter, r *http.Request) {
 	ws, err := upgrader.Upgrade(w, r, nil)
@@ -30,14 +35,16 @@ func WebSocketApi(w http.ResponseWriter, r *http.Request) {
 	}
 	defer ws.Close()
 
-	t, fileCountBytes, _ := ws.ReadMessage()
-	if t != websocket.BinaryMessage || len(fileCountBytes) != 1 {
+	t, fileCountBytes, err := ws.ReadMessage()
+	if err != nil || t != websocket.BinaryMessage || len(fileCountBytes) != 1 {
 		js, _ := json.Marshal(apiResponse{Error: "file count should be a single byte"})
+		// If err != nil this WriteMessage will fail, but that's ok.
+		// Same goes for all the other blocks that catch errors at the same time as other failure criteria.
 		_ = ws.WriteMessage(websocket.BinaryMessage, js)
 		return
 	}
-	fileCount := int(fileCountBytes[0])
 
+	fileCount := int(fileCountBytes[0])
 	if fileCount <= 0 {
 		js, _ := json.Marshal(apiResponse{Error: "file count must be > 0"})
 		_ = ws.WriteMessage(websocket.BinaryMessage, js)
@@ -53,11 +60,8 @@ func WebSocketApi(w http.ResponseWriter, r *http.Request) {
 
 	// Receive each file.
 	for i := 0; i < fileCount; i++ {
-		fileReadTimeStart := time.Now()
-		t, fileBytes, _ := ws.ReadMessage()
-		log.Printf("File read %d took %s\n", i, time.Since(fileReadTimeStart))
-
-		if t != websocket.BinaryMessage {
+		t, fileBytes, err := ws.ReadMessage()
+		if err != nil || t != websocket.BinaryMessage {
 			js, _ := json.Marshal(apiResponse{Error: "files should be sent as binary data"})
 			_ = ws.WriteMessage(websocket.BinaryMessage, js)
 			return
@@ -77,6 +81,9 @@ func WebSocketApi(w http.ResponseWriter, r *http.Request) {
 			mpwdCounter.Update(message)
 			mpmCounter.Update(message)
 		}
+
+		progressJs, _ := json.Marshal(progressResponse{Progress: (100 / fileCount) * i})
+		_ = ws.WriteMessage(websocket.BinaryMessage, progressJs)
 	}
 
 	log.Printf("File processing took %s\n", time.Since(startTime))

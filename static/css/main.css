@@ -29,3 +29,17 @@ body {
 .half-width-chart {
     width: 50%;
 }
+
+#upload-div {
+    display: flex;
+    align-items: center;
+}
+#upload-error-text {
+    visibility: hidden;
+    margin-left: 1em;
+}
+#upload-progress-bar {
+    visibility: hidden;
+    margin-left: 1em;
+    width: 20em;
+}

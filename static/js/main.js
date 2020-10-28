@@ -1,5 +1,11 @@
+//
+// Constants
+//
+
 const fileInput = document.getElementById('messenger-file-input');
-const uploadBtn = document.getElementById('get-stats-btn');
+const uploadBtn = document.getElementById('upload-files-btn');
+const uploadProgressBar = document.getElementById('upload-progress-bar');
+const uploadErrorText = document.getElementById('upload-error-text');
 const infoSection = document.getElementsByClassName('website-information')[0];
 const chartSection = document.getElementsByClassName('charts')[0];
 const conversationTitle = document.getElementById('conversation-title');
@@ -7,20 +13,59 @@ const conversationTitle = document.getElementById('conversation-title');
 let webSocketUrl = window.location.protocol === 'https:' ? 'wss' : 'ws';
 webSocketUrl += `://${window.location.host}/api/ws`;
 
+//
+// Element value setters
+//
+
 function setTitle(titleText) {
     conversationTitle.textContent = `${titleText}`;
 }
 
-function hideInfoShowCharts() {
+function setUploadPercent(percent) {
+    uploadProgressBar.value = percent;
+}
+
+function setUploadErrorText(errorText) {
+    uploadErrorText.textContent = errorText;
+}
+
+//
+// State setters
+// There is some non-DRY code here but it's so that everything that is happening is clear.
+//
+
+function setChartViewState(title) {
+    setTitle(title);
+    uploadProgressBar.style.visibility = 'hidden';
+    uploadErrorText.style.visibility = 'hidden';
     infoSection.style.display = 'none';
     chartSection.style.visibility = 'visible';
 }
 
-function hideChartsShowInfo() {
+function setUploadingState() {
+    setUploadErrorText('');
+    setUploadPercent(0);
+    uploadProgressBar.style.visibility = 'visible';
+    uploadErrorText.style.visibility = 'hidden';
+}
+
+function setUploadErrorState(errorText) {
+    setUploadErrorText(errorText);
+    uploadProgressBar.style.visibility = 'hidden';
+    uploadErrorText.style.visibility = 'visible';
+}
+
+function setInfoViewState() {
     setTitle('');
+    uploadProgressBar.style.visibility = 'hidden';
+    uploadErrorText.style.visibility = 'hidden';
     infoSection.style.display = 'block';
     chartSection.style.visibility = 'hidden';
 }
+
+//
+// Functions & Event listeners
+//
 
 function createCharts(jsonData) {
     const messengerColour = 'rgb(0,198,255)';
@@ -62,6 +107,8 @@ function createCharts(jsonData) {
 }
 
 function uploadFiles() {
+    setUploadingState();
+
     const ws = new WebSocket(webSocketUrl);
 
     ws.onopen = () => {
@@ -71,30 +118,25 @@ function uploadFiles() {
 
         // Send off all the files asap.
         for (let i = 0; i < fileInput.files.length; i++) {
-            console.time(`read file ${i} into memory`);
             const file = fileInput.files[i];
-            file.arrayBuffer().then((data) => {
-                console.timeEnd(`read file ${i} into memory`);
-                ws.send(data);
-            });
+            file.arrayBuffer().then((data) => { ws.send(data); });
         }
     };
 
     ws.onmessage = async (e) => {
-        ws.close();
         const data = JSON.parse(await e.data.text());
 
-        let title = data.conversation_title;
-        if (data.error !== '') {
-            title = `Error: ${data.error}`;
+        if (data.progress !== undefined) {
+            setUploadPercent(data.progress);
+        } else if (data.error !== '') {
+            setUploadErrorState(`Error: ${data.error}`);
         } else {
-            // No error so load charts.
+            ws.close();
+            const title = data.conversation_title;
             createCharts(data);
+            history.pushState({ stats: true, title }, null, '/stats');
+            setChartViewState(title);
         }
-
-        history.pushState({ stats: true, title }, null, '/stats');
-        setTitle(title);
-        hideInfoShowCharts();
     };
 }
 
@@ -108,10 +150,9 @@ window.addEventListener('load', () => {
 
     window.addEventListener('popstate', (e) => {
         if (e.state === null || e.state.stats !== true) {
-            hideChartsShowInfo();
+            setInfoViewState();
         } else if (e.state.stats === true) {
-            hideInfoShowCharts();
-            setTitle(e.state.title);
+            setChartViewState(e.state.title);
         }
     });
 });

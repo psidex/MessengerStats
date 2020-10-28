@@ -22,7 +22,11 @@
 
         <section class="website-information">
             <input id="messenger-file-input" type="file" name="messenger_files" accept=".json" multiple/>
-            <button type="button" id="get-stats-btn">Get Stats</button>
+            <div id="upload-div">
+                <button id="upload-files-btn" type="button">Get Stats</button>
+                <p id="upload-error-text"></p>
+                <progress id="upload-progress-bar" value="0" max="100"></progress>
+            </div>
 
             <h2>How to get your Messenger data</h2>
             <ol>

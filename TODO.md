@@ -1,8 +1,5 @@
 # TODO List
 
-- [ ] Transfer over WS takes quite long, see if it can be parallelized server side
-    - Need to check that the cost of parallelization does not cancel out doing it (e.g. time to lock and unlock mutexs)
-    - Maybe stats update functions can accept a slice of messages instead of single messages and then iterate themselves to save mutex usage
 - [ ] Provide hosted and downloadable version
 - [ ] Have a demo page that shows randomly generated fake data
     - Maybe it just loops a set of pre-made conversations instead of full generation
@@ -27,6 +24,14 @@
 - [x] If user downloads binary, make it clear that it does not request any resources from internet (user must download static dir tho)
 
 ### JSON WebSocket API
+
+File upload progress response:
+
+```json
+{
+  "progress": int (0-100)
+}
+```
 
 Send file count and then raw json file bytes, receive json:
 
