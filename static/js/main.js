@@ -43,6 +43,7 @@ function setChartViewState(title) {
 }
 
 function setUploadingState() {
+    uploadBtn.disabled = true;
     setUploadErrorText('');
     setUploadPercent(0);
     uploadProgressBar.style.visibility = 'visible';
@@ -50,12 +51,14 @@ function setUploadingState() {
 }
 
 function setUploadErrorState(errorText) {
+    uploadBtn.disabled = false;
     setUploadErrorText(errorText);
     uploadProgressBar.style.visibility = 'hidden';
     uploadErrorText.style.visibility = 'visible';
 }
 
 function setInfoViewState() {
+    uploadBtn.disabled = false;
     setTitle('');
     uploadProgressBar.style.visibility = 'hidden';
     uploadErrorText.style.visibility = 'hidden';
