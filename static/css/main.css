@@ -12,7 +12,7 @@ body {
     margin-bottom: 0 !important;
 }
 
-.charts {
+.initially-hidden {
     visibility: hidden;
 }
 
@@ -35,11 +35,9 @@ body {
     align-items: center;
 }
 #upload-error-text {
-    visibility: hidden;
     margin-left: 1em;
 }
 #upload-progress-bar {
-    visibility: hidden;
     margin-left: 1em;
     width: 20em;
 }

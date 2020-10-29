@@ -20,12 +20,12 @@
         <h1>Messenger Stats</h1>
         <h2 id="conversation-title"></h2>
 
-        <section class="website-information">
+        <section id="website-information">
             <input id="messenger-file-input" type="file" name="messenger_files" accept=".json" multiple/>
             <div id="upload-div">
                 <button id="upload-files-btn" type="button">Get Stats</button>
-                <p id="upload-error-text"></p>
-                <progress id="upload-progress-bar" value="0" max="100"></progress>
+                <p id="upload-error-text" class="initially-hidden"></p>
+                <progress id="upload-progress-bar" value="0" max="100" class="initially-hidden"></progress>
             </div>
 
             <h2>How to get your Messenger data</h2>
@@ -53,7 +53,7 @@
             </ul>
         </section>
 
-        <section class="charts">
+        <section id="charts">
             <div class="chart full-with-chart" id="messages-per-month-chart"></div>
             <div class="half-width-chart-container">
                 <div class="chart half-width-chart" id="messages-per-user-chart"></div>

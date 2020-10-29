@@ -6,8 +6,8 @@ const fileInput = document.getElementById('messenger-file-input');
 const uploadBtn = document.getElementById('upload-files-btn');
 const uploadProgressBar = document.getElementById('upload-progress-bar');
 const uploadErrorText = document.getElementById('upload-error-text');
-const infoSection = document.getElementsByClassName('website-information')[0];
-const chartSection = document.getElementsByClassName('charts')[0];
+const infoSection = document.getElementById('website-information');
+const chartSection = document.getElementById('charts');
 const conversationTitle = document.getElementById('conversation-title');
 
 let webSocketUrl = window.location.protocol === 'https:' ? 'wss' : 'ws';
@@ -39,7 +39,8 @@ function setChartViewState(title) {
     uploadProgressBar.style.visibility = 'hidden';
     uploadErrorText.style.visibility = 'hidden';
     infoSection.style.display = 'none';
-    chartSection.style.visibility = 'visible';
+    chartSection.style.display = 'block';
+    // chartSection.style.visibility = 'visible';
 }
 
 function setUploadingState() {
@@ -63,7 +64,8 @@ function setInfoViewState() {
     uploadProgressBar.style.visibility = 'hidden';
     uploadErrorText.style.visibility = 'hidden';
     infoSection.style.display = 'block';
-    chartSection.style.visibility = 'hidden';
+    chartSection.style.display = 'none';
+    // chartSection.style.visibility = 'hidden';
 }
 
 //
@@ -112,6 +114,9 @@ function createCharts(jsonData) {
 function uploadFiles() {
     setUploadingState();
 
+    // We want the user to know that something is happening.
+    setUploadPercent(1);
+
     const ws = new WebSocket(webSocketUrl);
 
     ws.onopen = () => {
@@ -136,19 +141,18 @@ function uploadFiles() {
         } else {
             ws.close();
             const title = data.conversation_title;
-            createCharts(data);
             history.pushState({ stats: true, title }, null, '/stats');
             setChartViewState(title);
+            createCharts(data);
         }
+    };
+
+    ws.onerror = () => {
+        setUploadErrorState('Websocket Error');
     };
 }
 
 window.addEventListener('load', () => {
-    if (navigator.userAgent.toLowerCase().indexOf('firefox') > -1) {
-        alert('This app currently does not work in Firefox due to a bug in Firefox');
-        return;
-    }
-
     uploadBtn.addEventListener('click', uploadFiles);
 
     window.addEventListener('popstate', (e) => {
