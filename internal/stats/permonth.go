@@ -15,13 +15,13 @@ type MessagesPerMonthJsObject struct {
 
 // MessagesPerMonthCounter is for counting how many messages are sent per month.
 type MessagesPerMonthCounter struct {
-	messagesPerYearMonth map[int]map[int]int
+	messagesPerMonth map[int]map[int]int
 }
 
 // NewMessagesPerMonthCounter creates a new MessagesPerMonthCounter.
 func NewMessagesPerMonthCounter() MessagesPerMonthCounter {
 	m := MessagesPerMonthCounter{}
-	m.messagesPerYearMonth = make(map[int]map[int]int)
+	m.messagesPerMonth = make(map[int]map[int]int)
 	return m
 }
 
@@ -31,63 +31,56 @@ func (m MessagesPerMonthCounter) Update(message messenger.Message) {
 	year, mo, _ := time.Unix(timestamp, 0).Date()
 	month := int(mo)
 
-	if _, ok := m.messagesPerYearMonth[year]; ok {
-		if _, ok := m.messagesPerYearMonth[year][month]; ok {
-			m.messagesPerYearMonth[year][month]++
+	if _, ok := m.messagesPerMonth[year]; ok {
+		if _, ok := m.messagesPerMonth[year][month]; ok {
+			m.messagesPerMonth[year][month]++
 		} else {
-			m.messagesPerYearMonth[year][month] = 1
+			m.messagesPerMonth[year][month] = 1
 		}
 	} else {
-		m.messagesPerYearMonth[year] = map[int]int{month: 1}
+		m.messagesPerMonth[year] = map[int]int{month: 1}
 	}
 }
 
 // GetJsObject returns the MessagesPerMonthJsObject for passing to Highcharts.
 func (m MessagesPerMonthCounter) GetJsObject() MessagesPerMonthJsObject {
-	if len(m.messagesPerYearMonth) <= 0 {
+	if len(m.messagesPerMonth) <= 0 {
 		return MessagesPerMonthJsObject{}
 	}
 
-	messagesPerYearMonthSortedKeys := make([]int, len(m.messagesPerYearMonth))
-	i := 0
-	for k := range m.messagesPerYearMonth {
-		messagesPerYearMonthSortedKeys[i] = k
-		i++
+	var messagesPerMonthSortedKeys []int
+	for k := range m.messagesPerMonth {
+		messagesPerMonthSortedKeys = append(messagesPerMonthSortedKeys, k)
 	}
-	sort.Ints(messagesPerYearMonthSortedKeys)
+	sort.Ints(messagesPerMonthSortedKeys)
 
-	firstYear := messagesPerYearMonthSortedKeys[0]
+	firstYear := messagesPerMonthSortedKeys[0]
+	// A year is never created without setting at least 1 month so we don't need to worry about a map with no values.
+	firstMonth := sortedMapKeys(m.messagesPerMonth[firstYear])[0]
 	currentYear := time.Now().Year()
+	currentMonth := int(time.Now().Month())
 
 	// Fill out our data so that months with 0 messages actually show 0.
-	// TODO: Will set all months to 0 even if not happened yet (important for first and last year)
-	// From the first year to current year.
-	for iterYear := firstYear; iterYear <= currentYear; iterYear++ {
-		// If there is data for that year.
-		if _, ok := m.messagesPerYearMonth[iterYear]; ok {
-			// For each month.
-			for iterMonth := 1; iterMonth <= 12; iterMonth++ {
-				// If there is not data, set the value to 0 (before there would have been no such key).
-				if _, ok := m.messagesPerYearMonth[iterYear][iterMonth]; !ok {
-					m.messagesPerYearMonth[iterYear][iterMonth] = 0
-				}
-			}
-		} else {
-			// Possible if conversation breaks for a year or more.
-			m.messagesPerYearMonth[iterYear] = map[int]int{
-				1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0, 10: 0, 11: 0, 12: 0,
-			}
+	for rd := rangeMonths(firstYear, firstMonth, currentYear, currentMonth); ; {
+		date := rd()
+		if date.IsZero() {
+			break
+		}
+		year, mo, _ := date.Date()
+		month := int(mo)
+		if _, ok := m.messagesPerMonth[year][month]; !ok {
+			m.messagesPerMonth[year][month] = 0
 		}
 	}
 
 	// Construct object.
 	obj := MessagesPerMonthJsObject{}
-	for _, year := range messagesPerYearMonthSortedKeys {
-		monthMap := m.messagesPerYearMonth[year]
+	for _, year := range messagesPerMonthSortedKeys {
+		monthMap := m.messagesPerMonth[year]
 		for _, month := range sortedMapKeys(monthMap) {
 			text := fmt.Sprintf("%d-%d", year, month)
 			obj.Categories = append(obj.Categories, text)
-			obj.Data = append(obj.Data, m.messagesPerYearMonth[year][month])
+			obj.Data = append(obj.Data, m.messagesPerMonth[year][month])
 		}
 	}
 	return obj
@@ -101,4 +94,21 @@ func sortedMapKeys(mapping map[int]int) []int {
 	}
 	sort.Ints(keys)
 	return keys
+}
+
+// rangeMonths returns a range function over start date to end date inclusive, returning incrementing months.
+// After the end of the range, the range function returns a zero date (date.IsZero() is true).
+func rangeMonths(startYear, startMonth, endYear, endMonth int) func() time.Time {
+	// Edited from https://stackoverflow.com/a/50989054/6396652
+	start := time.Date(startYear, time.Month(startMonth), 1, 0, 0, 0, 0, time.UTC)
+	end := time.Date(endYear, time.Month(endMonth), 1, 0, 0, 0, 0, time.UTC)
+
+	return func() time.Time {
+		if start.After(end) {
+			return time.Time{}
+		}
+		date := start
+		start = start.AddDate(0, 1, 0)
+		return date
+	}
 }
