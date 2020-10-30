@@ -82,7 +82,7 @@ func WebSocketApi(w http.ResponseWriter, r *http.Request) {
 			mpmCounter.Update(message)
 		}
 
-		progressJs, _ := json.Marshal(progressResponse{Progress: (100 / fileCount) * i})
+		progressJs, _ := json.Marshal(progressResponse{Progress: (100 / fileCount) * (i + 1)})
 		_ = ws.WriteMessage(websocket.BinaryMessage, progressJs)
 	}
 
