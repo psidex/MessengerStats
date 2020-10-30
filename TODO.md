@@ -4,6 +4,7 @@
 - [ ] Have a demo page that shows randomly generated fake data
     - Maybe it just loops a set of pre-made conversations instead of full generation
 
+- [ ] Maybe if conversation is just two people, use 2 series of data for line chart, one for each user
 - [ ] Maybe find way to embed static dir in go files
 - [ ] Maybe have ratelimit for IPs (flag/option to decide the limit)
 

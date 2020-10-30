@@ -40,7 +40,6 @@ function setChartViewState(title) {
     uploadErrorText.style.visibility = 'hidden';
     infoSection.style.display = 'none';
     chartSection.style.display = 'block';
-    // chartSection.style.visibility = 'visible';
 }
 
 function setUploadingState() {
@@ -65,7 +64,6 @@ function setInfoViewState() {
     uploadErrorText.style.visibility = 'hidden';
     infoSection.style.display = 'block';
     chartSection.style.display = 'none';
-    // chartSection.style.visibility = 'hidden';
 }
 
 //
