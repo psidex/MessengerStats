@@ -44,6 +44,7 @@ function setChartViewState(title) {
 
 function setUploadingState() {
     uploadBtn.disabled = true;
+    fileInput.disabled = true;
     setUploadErrorText('');
     setUploadPercent(0);
     uploadProgressBar.style.visibility = 'visible';
@@ -52,6 +53,7 @@ function setUploadingState() {
 
 function setUploadErrorState(errorText) {
     uploadBtn.disabled = false;
+    fileInput.disabled = false;
     setUploadErrorText(errorText);
     uploadProgressBar.style.visibility = 'hidden';
     uploadErrorText.style.visibility = 'visible';
@@ -59,6 +61,7 @@ function setUploadErrorState(errorText) {
 
 function setInfoViewState() {
     uploadBtn.disabled = false;
+    fileInput.disabled = false;
     setTitle('');
     uploadProgressBar.style.visibility = 'hidden';
     uploadErrorText.style.visibility = 'hidden';

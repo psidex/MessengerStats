@@ -68,15 +68,20 @@ func (m MessagesPerMonthCounter) GetJsObject() MessagesPerMonthJsObject {
 		}
 		year, mo, _ := date.Date()
 		month := int(mo)
-		if _, ok := m.messagesPerMonth[year][month]; !ok {
-			m.messagesPerMonth[year][month] = 0
+		if _, ok := m.messagesPerMonth[year]; ok {
+			if _, ok := m.messagesPerMonth[year][month]; !ok {
+				m.messagesPerMonth[year][month] = 0
+			}
+		} else {
+			m.messagesPerMonth[year] = map[int]int{month: 0}
 		}
 	}
 
 	// Construct object.
 	obj := MessagesPerMonthJsObject{}
-	for _, year := range messagesPerMonthSortedKeys {
+	for year := firstYear; year <= currentYear; year++ {
 		monthMap := m.messagesPerMonth[year]
+		// Can't do 1-12 due to ranging firstMonth and currentMonth instead of 1-12 all the time.
 		for _, month := range sortedMapKeys(monthMap) {
 			text := fmt.Sprintf("%d-%d", year, month)
 			obj.Categories = append(obj.Categories, text)
