@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/gorilla/websocket"
 	"github.com/psidex/MessengerStats/internal/messenger"
 	"github.com/psidex/MessengerStats/internal/stats"
@@ -30,7 +31,7 @@ type progressResponse struct {
 func WebSocketApi(w http.ResponseWriter, r *http.Request) {
 	ws, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
-		log.Printf("WebSocket upgrader error: %s\n", err)
+		log.Printf("WebSocket upgrade error: %s\n", err)
 		return
 	}
 	defer ws.Close()
@@ -69,7 +70,7 @@ func WebSocketApi(w http.ResponseWriter, r *http.Request) {
 
 		conversation, err := messenger.NewConversation(fileBytes)
 		if err != nil {
-			js, _ := json.Marshal(apiResponse{Error: err.Error()})
+			js, _ := json.Marshal(apiResponse{Error: fmt.Sprintf("could not parse file bytes: %s", err)})
 			_ = ws.WriteMessage(websocket.BinaryMessage, js)
 			return
 		}
@@ -86,7 +87,7 @@ func WebSocketApi(w http.ResponseWriter, r *http.Request) {
 		_ = ws.WriteMessage(websocket.BinaryMessage, progressJs)
 	}
 
-	log.Printf("File processing took %s\n", time.Since(startTime))
+	log.Printf("Processed %d files, took %s\n", fileCount, time.Since(startTime))
 
 	jsonResponse, err := json.Marshal(apiResponse{
 		Title:              title,
@@ -95,7 +96,7 @@ func WebSocketApi(w http.ResponseWriter, r *http.Request) {
 		MessagesPerWeekday: mpwdCounter.GetJsObject(),
 	})
 	if err != nil {
-		log.Printf("Error marshalling apiResponse: %s\n", err)
+		log.Printf("Error marshaling apiResponse: %s\n", err)
 		return
 	}
 

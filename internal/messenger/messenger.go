@@ -1,6 +1,6 @@
 package messenger
 
-// These structs (courtesy of https://mholt.github.io/json-to-go/) are to be unmarshalled into using easyjson.
+// These structs (courtesy of https://mholt.github.io/json-to-go/) are to be unmarshaled into using easyjson.
 // If a field is required that is commented, uncomment it and re-run easyjson: "easyjson -all ./messenger.go".
 
 // Message defines the structure of a single Messenger message.
